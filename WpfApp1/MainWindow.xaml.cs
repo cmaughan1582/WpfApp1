@@ -23,6 +23,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        Dictionary<String, String> assignDict = new Dictionary<String, String>();
         Boolean HUDmode = false;
         Dictionary<String, String> credentials = new Dictionary<String, String>();
         List<String> assignNames = new List<string>();
