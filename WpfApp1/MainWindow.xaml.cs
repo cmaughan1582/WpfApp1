@@ -14,8 +14,10 @@ namespace WpfApp1
 {
 
     /* TODO
-    HUD only assigning option
-    Include sort option for middle list
+    HUD only assigning option DONE
+    Include sort option for middle list DONE
+    Multiple Assign DONE? Maybe add "assigning records, 1 of x done page like the database thing"
+    ask jed if he still wants the multiple assign option even though it doesn't save any time
     */
 
     /// <summary>
@@ -115,8 +117,16 @@ namespace WpfApp1
 
         private void sortByDistance(SalesforceClient client)
         {
-            String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
-            String currentInspectionAddress = (modifiedstreet + ", " + currentInspection.City__c + ", " + currentInspection.State__c);
+            String currentInspectionAddress;
+            if (!currentInspection.Street_Address__c.Contains(","))
+            {
+                String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
+                currentInspectionAddress = (modifiedstreet + ", " + currentInspection.City__c + ", " + currentInspection.State__c);
+            }
+            else
+            {
+                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+            }
             String JsonReturn = ("");
             using (var client1 = new HttpClient())
             {
@@ -193,11 +203,15 @@ namespace WpfApp1
             }
             else
             {
-                //assigning part goes here!
-                String assignID = workingList[index].contactID;
-                UpdateInspectorClass updateInspector = new UpdateInspectorClass();
-                updateInspector.Inspector__c = assignID;
-                client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                //assigning part goes here
+                foreach (KeyValuePair<string, string> entry in assignDict)
+                {
+                    // do something with entry.Value or entry.Key
+                    String assignID = entry.Value;
+                    UpdateInspectorClass updateInspector = new UpdateInspectorClass();
+                    updateInspector.Inspector__c = assignID;
+                    client.Update("Inspection__c", entry.Key, updateInspector);
+                }
                 orderNumberSearch = (currentInspection.Name);
                 currentInspection = new InspectionJSONClass();
                 SearchResults();
@@ -830,6 +844,10 @@ namespace WpfApp1
             var iassign = client.Query<InspectionListItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign'");
             for (int i = 0; i < iassign.Count; i++)
             {
+                if(iassign[i].ADHOC__c == null)
+                {
+                    iassign[i].ADHOC__c = "";
+                }
                 if (!HUDmode)
                 {
                     //InspectionJSONClass checkI = findInspectionbyOrderNumber(iassign[i].Name, client);
@@ -945,6 +963,26 @@ namespace WpfApp1
             HUDmode = true;
             mode_page.Visibility = Visibility.Collapsed;
             Rebuild_page.Visibility = Visibility.Visible;
+        }
+
+        private void ten_list_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ten_list_box.SelectedIndex == -1)
+            {
+
+            }
+            else
+            {
+                if (assignDict.ContainsKey(currentInspection.Id))
+                {
+                    assignDict[currentInspection.Id] = workingList[ten_list_box.SelectedIndex].contactID;
+                }
+                else
+                {
+                    assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex].contactID);
+                    Console.WriteLine("new added");
+                }
+            }
         }
     }//nothing goes below here
 }

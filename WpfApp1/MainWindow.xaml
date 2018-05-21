@@ -44,7 +44,7 @@
 
         <!--Results Page-->
         <Canvas Name="Results_Page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
-            <ListBox Name="ten_list_box" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="{Binding ActualHeight, ElementName=Results_Page}" Canvas.Right="10" Width="500">
+            <ListBox Name="ten_list_box" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="{Binding ActualHeight, ElementName=Results_Page}" Canvas.Right="10" Width="500" SelectionChanged="ten_list_box_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Path=.}" TextWrapping="Wrap"></TextBlock>
