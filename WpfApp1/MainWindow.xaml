@@ -146,7 +146,7 @@
             <TextBlock Name="inspector_fees" Canvas.Left="5" TextWrapping="Wrap" Text="inspector fees: " Canvas.Top="75" FontSize="18" Width="181"/>
             <TextBlock Name="remote_fees" Canvas.Left="5" TextWrapping="Wrap" Text="remote fees: " Canvas.Top="100" Width="181" FontSize="18"/>
             <TextBlock Name="fees_assigned" Canvas.Left="146" TextWrapping="Wrap" Text="Assigned to: " Canvas.Top="6" FontSize="18"/>
-            <TextBox Name="remote_box" Height="23" Canvas.Left="79" TextWrapping="Wrap" Text="" Canvas.Top="175" Width="120"/>
+            <TextBox Name="remote_box" Height="23" Canvas.Left="79" TextWrapping="Wrap" Text="" Canvas.Top="175" Width="120" KeyDown="remote_box_KeyDown"/>
             <TextBlock Name="remote_prompt" Canvas.Left="5" TextWrapping="Wrap" Text="Please enter a remote fee to add:" Canvas.Top="145" FontSize="18"/>
             <Button Name="fees_submit" Content="Add" Canvas.Left="100" Canvas.Top="206" Width="76" Click="fees_submit_Click"/>
             <Button Name="fees_return" Content="Return" Canvas.Left="10" Canvas.Bottom="20" Width="76" Click="fees_return_Click"/>

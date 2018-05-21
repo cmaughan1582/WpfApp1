@@ -214,6 +214,7 @@ namespace WpfApp1
                 }
                 orderNumberSearch = (currentInspection.Name);
                 currentInspection = new InspectionJSONClass();
+                assignDict = new Dictionary<string, string>();
                 SearchResults();
 
             }
@@ -969,7 +970,10 @@ namespace WpfApp1
         {
             if (ten_list_box.SelectedIndex == -1)
             {
-
+                if (assignDict.ContainsKey(currentInspection.Id))
+                {
+                    assignDict.Remove(currentInspection.Id);
+                }
             }
             else
             {
@@ -980,8 +984,15 @@ namespace WpfApp1
                 else
                 {
                     assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex].contactID);
-                    Console.WriteLine("new added");
                 }
+            }
+        }
+
+        private void remote_box_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                fees_submit_Click(this, new RoutedEventArgs());
             }
         }
     }//nothing goes below here
