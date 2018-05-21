@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Assigning" WindowState="Maximized"
-        Icon="newlogo.png">
+        Icon="newlogo_6zt_icon.ico">
     <Canvas RenderTransformOrigin="0.499,0.505" Name="Canvas1" Margin="0,0,0,0">
 
         <!--This is the starting page contents-->
@@ -152,6 +152,18 @@
             <Button Name="fees_return" Content="Return" Canvas.Left="10" Canvas.Bottom="20" Width="76" Click="fees_return_Click"/>
             <TextBlock Name="fees_type" Canvas.Left="146" TextWrapping="Wrap" Text="Fee Type: " Canvas.Top="30" FontSize="18"/>
         </Canvas>
+        
+        <!--This is the choose mode page-->
+        <Canvas Name="mode_page" Visibility="Collapsed">
+            <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Choose HUD or Non-HUD Mode" Canvas.Top="54" Width="{Binding ActualWidth, ElementName=Window1}" FontSize="36" TextAlignment="Center" FontWeight="Bold"/>
+            <Grid Canvas.Top="140" Width="{Binding ActualWidth, ElementName=Canvas1}">
+                <Button Name="Non_Hud_button" Content="Non-HUD" Width="74" Click="Non_Hud_button_Click" HorizontalAlignment="Center"/>
+            </Grid>
+            <Grid Canvas.Top="175" Width="{Binding ActualWidth, ElementName=Canvas1}">
+                <Button Name="Hud_button" Content="HUD" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
+            </Grid>
+        </Canvas>
+        
 
     </Canvas>
 </Window>

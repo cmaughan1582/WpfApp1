@@ -23,6 +23,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        Boolean HUDmode = false;
         Dictionary<String, String> credentials = new Dictionary<String, String>();
         List<String> assignNames = new List<string>();
         public const String mapKey = "On5gRfRDnoozDkk8zKjo5GpXGbvYCycm";
@@ -90,10 +91,18 @@ namespace WpfApp1
 
         }
 
-        static private List<OfficialInspectorClass> LoadSavedDatabase()
+        static private List<OfficialInspectorClass> LoadSavedDatabase(bool HUDmode)
         {
             List<OfficialInspectorClass> returnList = new List<OfficialInspectorClass>();
-            string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "nonhudinspectors.bin");
+            string saveFile;
+            if (HUDmode == false)
+            {
+                saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "nonhudinspectors.bin");
+            }
+            else
+            {
+                saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "hudinspectors.bin");
+            }
             using (Stream stream = File.Open(saveFile, FileMode.Open))
             {
                 var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
@@ -136,7 +145,7 @@ namespace WpfApp1
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             Rebuild_page.Visibility = Visibility.Collapsed;
-            workingList = LoadSavedDatabase();
+            workingList = LoadSavedDatabase(HUDmode);
             Search_Page.Visibility = Visibility.Visible;
             First_Search_Box1.Focus();
 
@@ -149,7 +158,7 @@ namespace WpfApp1
             try
             {
                 client.Authenticate(authflow);
-                Rebuild_page.Visibility = Visibility.Visible;
+                mode_page.Visibility = Visibility.Visible;
 
             }
             catch (SalesforceException ex)
@@ -219,21 +228,32 @@ namespace WpfApp1
             Rebuild_page.Visibility = Visibility.Collapsed;
             rebuild_progress.Visibility = Visibility.Visible;
             var progress = new Progress<string>(s => Records_text.Text = s);
-            await Task.Factory.StartNew(() => SecondThreadConcern.LongWork(progress, client),
+            await Task.Factory.StartNew(() => SecondThreadConcern.LongWork(progress, client, HUDmode),
                                         TaskCreationOptions.LongRunning);
             rebuild_progress.Visibility = Visibility.Collapsed;
             Button_Click_1(this, new RoutedEventArgs());
         }
         class SecondThreadConcern
         {
-            public static void LongWork(IProgress<string> progress, SalesforceClient client)
+            public static void LongWork(IProgress<string> progress, SalesforceClient client, bool HUDmode)
             {
                 const String mapKey = "On5gRfRDnoozDkk8zKjo5GpXGbvYCycm";
                 //this is the query that finds all records and builds them into an ilist
-                var records = client.Query<NewInspectorClass>(
-                    "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
-                    "From Account " +
-                    "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
+                IList<NewInspectorClass> records;
+                if (!HUDmode)
+                {
+                    records = client.Query<NewInspectorClass>(
+                        "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
+                        "From Account " +
+                        "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
+                }
+                else
+                {
+                    records = client.Query<NewInspectorClass>(
+                        "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
+                        "From Account " +
+                        "WHERE Account_Inactive__c=false AND HUD_Certified__c=TRUE AND Rep_ID__c!=null");
+                }
                 //creates a regular list, excluding qc accounts
                 List<OfficialInspectorClass> OfficialInspectorList = new List<OfficialInspectorClass>();
                 List<int> missedSeconds = new List<int>();
@@ -351,9 +371,15 @@ namespace WpfApp1
                 
                 }
                 //saves database to .bin file
-
-                string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "nonhudinspectors.bin");
-                using (Stream stream = File.Open(saveFile, FileMode.Create))
+                string saveFile;
+                if (!HUDmode)
+                {
+                    saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "nonhudinspectors.bin");
+                }
+                else{
+                    saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "hudinspectors.bin");
+                }
+                    using (Stream stream = File.Open(saveFile, FileMode.Create))
                 {
                     var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                     formatter.Serialize(stream, OfficialInspectorList);
@@ -482,15 +508,29 @@ namespace WpfApp1
                 tenInspectors = new List<String>();
                 for (int i = 0; i < 10; i++)
                 {
-                    String fnmaString = "No";
-                    String fmacString = "No";
-                    if (workingList[i].FNMA_Certified__c == true)
+                    String fnmaString;
+                    String fmacString;
+                    if (!HUDmode)
                     {
-                        fnmaString = "Yes";
+                        fnmaString = "No";
+                        fmacString = "No";
+                        if (workingList[i].FNMA_Certified__c == true)
+                        {
+                            fnmaString = "Yes";
+                        }
+                        if (workingList[i].Freddie_Mac_Certified__c == true)
+                        {
+                            fmacString = "Yes";
+                        }
                     }
-                    if (workingList[i].Freddie_Mac_Certified__c == true)
+                    else
                     {
-                        fmacString = "Yes";
+                        fnmaString = "No";
+                        fmacString = "No";
+                        if(workingList[i].HUD_Certified__c == true)
+                        {
+                            fmacString = "Yes";
+                        }
                     }
 
                     String newString = createTenString(i, fnmaString, fmacString);
@@ -743,11 +783,23 @@ namespace WpfApp1
         }
         private String createTenString(int i, String fnmaString, String fmacString)
         {
-            String newtenString = (workingList[i].Rep_ID__c + " " + workingList[i].Name + ":      " + Math.Round(workingList[i].currentDistance, 2) + " Miles" + "      Freddie: " + fmacString + "\n"
-                + "Grade: " + workingList[i].Inspector_Ranking__c + "      Assigned Inspections: " + workingList[i].assignedInspections + "      FNMA: " + fnmaString + "\n"
-                + "Status: " + workingList[i].Status__c + "      Fee: $" + workingList[i].feeDictionary[currentInspection.Fee_Type__c]
-                + "\nPhone: " + workingList[i].Phone
-                + "\nComments: " + workingList[i].Comments__c + "\n");
+            String newtenString;
+            if (!HUDmode)
+            {
+                newtenString = (workingList[i].Rep_ID__c + " " + workingList[i].Name + ":      " + Math.Round(workingList[i].currentDistance, 2) + " Miles" + "      Freddie: " + fmacString + "\n"
+                    + "Grade: " + workingList[i].Inspector_Ranking__c + "      Assigned Inspections: " + workingList[i].assignedInspections + "      FNMA: " + fnmaString + "\n"
+                    + "Status: " + workingList[i].Status__c + "      Fee: $" + workingList[i].feeDictionary[currentInspection.Fee_Type__c]
+                    + "\nPhone: " + workingList[i].Phone
+                    + "\nComments: " + workingList[i].Comments__c + "\n");
+            }
+            else
+            {
+                newtenString = newtenString = (workingList[i].Rep_ID__c + " " + workingList[i].Name + ":      " + Math.Round(workingList[i].currentDistance, 2) + " Miles" + "      HUD: " + fmacString + "\n"
+                    + "Grade: " + workingList[i].Inspector_Ranking__c + "      Assigned Inspections: " + workingList[i].assignedInspections + "\n"
+                    + "Status: " + workingList[i].Status__c + "      Fee: $" + workingList[i].feeDictionary[currentInspection.Fee_Type__c]
+                    + "\nPhone: " + workingList[i].Phone
+                    + "\nComments: " + workingList[i].Comments__c + "\n");
+            }
             return newtenString;
         }
 
@@ -777,28 +829,56 @@ namespace WpfApp1
             var iassign = client.Query<InspectionListItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign'");
             for (int i = 0; i < iassign.Count; i++)
             {
-                //InspectionJSONClass checkI = findInspectionbyOrderNumber(iassign[i].Name, client);
-                if (iassign[i].Inspection_Folder__c == null || iassign[i].ADHOC__c == "HUD" || iassign[i].ADHOC__c == "OCI - Hold")
+                if (!HUDmode)
                 {
-                    //Console.WriteLine("This won't be added");
+                    //InspectionJSONClass checkI = findInspectionbyOrderNumber(iassign[i].Name, client);
+                    if (iassign[i].Inspection_Folder__c == null || iassign[i].ADHOC__c.Contains("HUD") || iassign[i].ADHOC__c.Contains("OCI - Hold"))
+                    {
+                        //Console.WriteLine("This won't be added");
+                    }
+                    else
+                    {
+
+                        if (iassign[i].Inspector__c != null)
+                        {
+                            UpdateInspectorClass updateAssignqueue = new UpdateInspectorClass();
+                            updateAssignqueue.Inspector__c = null;
+                            InspectionJSONClass forupdate = findInspectionbyOrderNumber(iassign[i].Name, client);
+                            bool hello1 = client.Update("Inspection__c", forupdate.Id, updateAssignqueue);
+                            Console.WriteLine(hello1);
+                        }
+                        if (iassign[i].ADHOC__c == null)
+                        {
+                            iassign[i].ADHOC__c = "";
+                        }
+
+                        worker.Add(iassign[i]);
+                    }
                 }
                 else
                 {
-
-                    if (iassign[i].Inspector__c != null)
+                    if (iassign[i].Inspection_Folder__c != null || !iassign[i].ADHOC__c.Contains("HUD") || iassign[i].ADHOC__c == "OCI - Hold")
                     {
-                        UpdateInspectorClass updateAssignqueue = new UpdateInspectorClass();
-                        updateAssignqueue.Inspector__c = null;
-                        InspectionJSONClass forupdate = findInspectionbyOrderNumber(iassign[i].Name, client);
-                        bool hello1 = client.Update("Inspection__c", forupdate.Id, updateAssignqueue);
-                        Console.WriteLine(hello1);
+                        //Console.WriteLine("This won't be added");
                     }
-                    if (iassign[i].ADHOC__c == null)
+                    else
                     {
-                        iassign[i].ADHOC__c = "";
-                    }
 
-                    worker.Add(iassign[i]);
+                        if (iassign[i].Inspector__c != null)
+                        {
+                            UpdateInspectorClass updateAssignqueue = new UpdateInspectorClass();
+                            updateAssignqueue.Inspector__c = null;
+                            InspectionJSONClass forupdate = findInspectionbyOrderNumber(iassign[i].Name, client);
+                            bool hello1 = client.Update("Inspection__c", forupdate.Id, updateAssignqueue);
+                            Console.WriteLine(hello1);
+                        }
+                        if (iassign[i].ADHOC__c == null)
+                        {
+                            iassign[i].ADHOC__c = "";
+                        }
+
+                        worker.Add(iassign[i]);
+                    }
                 }
             }
             if (SortNumber == 0)
@@ -850,6 +930,20 @@ namespace WpfApp1
             {
                 Save_adhoc_button_Click(this, new RoutedEventArgs());
             }
+        }
+
+        private void Non_Hud_button_Click(object sender, RoutedEventArgs e)
+        {
+            HUDmode = false;
+            mode_page.Visibility = Visibility.Collapsed;
+            Rebuild_page.Visibility = Visibility.Visible;
+        }
+
+        private void Hud_button_Click(object sender, RoutedEventArgs e)
+        {
+            HUDmode = true;
+            mode_page.Visibility = Visibility.Collapsed;
+            Rebuild_page.Visibility = Visibility.Visible;
         }
     }//nothing goes below here
 }
