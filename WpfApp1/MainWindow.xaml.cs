@@ -201,7 +201,7 @@ namespace WpfApp1
         async private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             int index = ten_list_box.SelectedIndex;
-            if (index == -1)
+            if (assignDict.Count == 0)
             {
 
             }
@@ -779,12 +779,15 @@ namespace WpfApp1
             //sorts by region EAST vs WEST
             else if (SortNumber == 1)
             {
-                worker.Sort((x, y) => x.Region__c.CompareTo(y.Region__c));
+
+                worker.Sort((x, y) => x.Name.CompareTo(y.Name));
+                worker = MergeSort(worker, 1);
             }
             //Sorts by adhoc
             else if (SortNumber == 2)
             {
-                worker.Sort((x, y) => x.ADHOC__c.CompareTo(y.ADHOC__c));
+                worker.Sort((x, y) => x.Name.CompareTo(y.Name));
+                worker = MergeSort(worker, 2);
             }
             //puts the fnma inspections on the top of the list
             else if (SortNumber == 3)
@@ -862,6 +865,80 @@ namespace WpfApp1
                     assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex].contactID);
                 }
             }
+        }
+        
+        static private List<InspectionListItem> MergeSort(List<InspectionListItem> workingList, int mode)
+        {
+            List<InspectionListItem> returnList = new List<InspectionListItem>();
+            if (workingList.Count == 1)
+            {
+                return workingList;
+            }
+            else
+            {
+                int mid = (workingList.Count/2);
+                
+                List<InspectionListItem> left = new List<InspectionListItem>();
+                List<InspectionListItem> right = new List<InspectionListItem>();
+                for(int i = 0; i < workingList.Count; i++)
+                {
+                    if(i < mid)
+                    {
+                        left.Add(workingList[i]);
+                    }
+                    else
+                    {
+                        right.Add(workingList[i]);
+                    }
+                }
+                left = MergeSort(left, mode);
+                right = MergeSort(right, mode);
+                returnList = RealSort(left, right, mode);
+            }
+            return returnList;
+        }
+        private static List<InspectionListItem> RealSort(List<InspectionListItem> left, List<InspectionListItem> right, int mode)
+        {
+            List<InspectionListItem> temp = new List<InspectionListItem>();
+            int lindex = 0;
+            int rindex = 0;
+            while(lindex < left.Count && rindex < right.Count)
+            {
+                int modecompare;
+                if(mode == 1)
+                {
+                    modecompare = String.Compare(left[lindex].Region__c, right[rindex].Region__c);
+                }
+                else if(mode == 2)
+                {
+                    modecompare = String.Compare(left[lindex].ADHOC__c, right[rindex].ADHOC__c);
+                }
+                else
+                {
+                    return temp;
+                }
+                if(modecompare == 1)
+                {
+                    temp.Add(right[rindex]);
+                    rindex++;
+                }
+                else
+                {
+                    temp.Add(left[lindex]);
+                    lindex++;
+                }
+            }
+            while(lindex < left.Count)
+            {
+                temp.Add(left[lindex]);
+                lindex++;
+            }
+            while(rindex < right.Count)
+            {
+                temp.Add(right[rindex]);
+                rindex++;
+            }
+            return temp;
         }
     }//nothing goes below here
 }
