@@ -143,6 +143,7 @@
     <Compile Include="InspectorFeesClass.cs" />
     <Compile Include="NewFeeClass.cs" />
     <Compile Include="QueryforIDclass.cs" />
+    <Compile Include="SecondThreadConcern.cs" />
     <Compile Include="TempInspectorClass.cs" />
     <Compile Include="UpdateAdhocClass.cs" />
     <Compile Include="UpdateInspectorClass.cs" />

@@ -48,6 +48,8 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+            //all of this stuff is hopefully going to be used in the future to create a re-enter credentials screen for
+            //when the password is changed.
             if (!DirectoryExists)
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
@@ -75,10 +77,27 @@ namespace WpfApp1
                     credentials = (Dictionary<String, String>)bformatter.Deserialize(stream);
                 }
             }
-
-
         }
 
+        //this function is for the initial login button
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            login_page.Visibility = Visibility.Collapsed;
+            var authflow = new UsernamePasswordAuthenticationFlow(clientID, consumerSecret, credentials["username"], credentials["password"] + credentials["securityToken"]);
+            try
+            {
+                client.Authenticate(authflow);
+                mode_page.Visibility = Visibility.Visible;
+
+            }
+            catch (SalesforceException ex)
+            {
+                return;
+            }
+        }
+
+        //this function finds an inspection by the order number and returns that inspection. Used by search results to store
+        //current inspection variable
         static private InspectionJSONClass findInspectionbyOrderNumber(String orderNumber, SalesforceClient client)
         {
             var record = client.Query<QueryforIDclass>("SELECT Id From Inspection__c WHERE Name='" + orderNumber + "'");
@@ -93,7 +112,7 @@ namespace WpfApp1
 
 
         }
-
+        //this function loads a database already saved on the computer, used with the load button function
         static private List<OfficialInspectorClass> LoadSavedDatabase(bool HUDmode)
         {
             List<OfficialInspectorClass> returnList = new List<OfficialInspectorClass>();
@@ -114,7 +133,7 @@ namespace WpfApp1
             }
             return returnList;
         }
-
+        //this function sorts the working list by distance to the current inspection...used during search results function
         private void sortByDistance(SalesforceClient client)
         {
             String currentInspectionAddress;
@@ -152,7 +171,7 @@ namespace WpfApp1
             workingList.Sort((x, y) => x.currentDistance.CompareTo(y.currentDistance));
         }
 
-
+        //this button is for the load button on the rebuild database page
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             Rebuild_page.Visibility = Visibility.Collapsed;
@@ -162,22 +181,7 @@ namespace WpfApp1
 
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            login_page.Visibility = Visibility.Collapsed;
-            var authflow = new UsernamePasswordAuthenticationFlow(clientID, consumerSecret, credentials["username"], credentials["password"]+credentials["securityToken"]);
-            try
-            {
-                client.Authenticate(authflow);
-                mode_page.Visibility = Visibility.Visible;
-
-            }
-            catch (SalesforceException ex)
-            {
-                return;
-            }
-        }
-
+        //This is the function for the search page after you rebuild the database
         private void First_Search_Button_Click(object sender, RoutedEventArgs e)
         {
             orderNumberSearch = (First_Search_Box1.Text);
@@ -185,7 +189,7 @@ namespace WpfApp1
             ReSearch_Text.Visibility = Visibility.Visible;
             SearchResults();
         }
-
+        //this function links the enter key from the first search page box to the first search function
         private void First_Search_Box1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -193,8 +197,8 @@ namespace WpfApp1
                 First_Search_Button_Click(this, new RoutedEventArgs());
             }
         }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
+        //this function is for the assign button on the results screen
+        async private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             int index = ten_list_box.SelectedIndex;
             if (index == -1)
@@ -204,14 +208,18 @@ namespace WpfApp1
             else
             {
                 //assigning part goes here
-                foreach (KeyValuePair<string, string> entry in assignDict)
-                {
-                    // do something with entry.Value or entry.Key
-                    String assignID = entry.Value;
-                    UpdateInspectorClass updateInspector = new UpdateInspectorClass();
-                    updateInspector.Inspector__c = assignID;
-                    client.Update("Inspection__c", entry.Key, updateInspector);
-                }
+                //if i want to add progress screen, put this loop in a function in the class that has the build
+                //database function, copy paste the button_clicked function to here and modify as needed!
+                Results_Page.Visibility = Visibility.Collapsed;
+                rebuild_progress.Visibility = Visibility.Visible;
+                Building_database.Text = "Assigning Orders...";
+                Records_text.Text = "Orders Assigned:";
+                var progress = new Progress<string>(s => Records_text.Text = s);
+                await Task.Factory.StartNew(() => SecondThreadConcern.Longwork2(progress, client, assignDict),
+                                            TaskCreationOptions.LongRunning);
+                rebuild_progress.Visibility = Visibility.Collapsed;
+                Button_Click_1(this, new RoutedEventArgs());
+                rebuild_progress.Visibility = Visibility.Collapsed;
                 orderNumberSearch = (currentInspection.Name);
                 currentInspection = new InspectionJSONClass();
                 assignDict = new Dictionary<string, string>();
@@ -220,13 +228,14 @@ namespace WpfApp1
             }
 
         }
-
+        //this function is for the search button on the results page
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             orderNumberSearch = (Search_Box2.Text);
             SearchResults();
         }
-
+        //this function links the enter key for the search box on the results page to the function for the search button
+        //on the results page
         private void Search_Box2_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -239,6 +248,7 @@ namespace WpfApp1
             }
 
         }
+        //this function is for the rebuild database button
         private async void Button_Clicked(object sender, EventArgs e)
         {
             Rebuild_page.Visibility = Visibility.Collapsed;
@@ -249,160 +259,7 @@ namespace WpfApp1
             rebuild_progress.Visibility = Visibility.Collapsed;
             Button_Click_1(this, new RoutedEventArgs());
         }
-        class SecondThreadConcern
-        {
-            public static void LongWork(IProgress<string> progress, SalesforceClient client, bool HUDmode)
-            {
-                const String mapKey = "On5gRfRDnoozDkk8zKjo5GpXGbvYCycm";
-                //this is the query that finds all records and builds them into an ilist
-                IList<NewInspectorClass> records;
-                if (!HUDmode)
-                {
-                    records = client.Query<NewInspectorClass>(
-                        "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
-                        "From Account " +
-                        "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
-                }
-                else
-                {
-                    records = client.Query<NewInspectorClass>(
-                        "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
-                        "From Account " +
-                        "WHERE Account_Inactive__c=false AND HUD_Certified__c=TRUE AND Rep_ID__c!=null");
-                }
-                //creates a regular list, excluding qc accounts
-                List<OfficialInspectorClass> OfficialInspectorList = new List<OfficialInspectorClass>();
-                List<int> missedSeconds = new List<int>();
-                for (int i = 0; i < records.Count; i++)
-                {
-                    if (records[i].ShippingPostalCode != null)
-                    {
-
-                        OfficialInspectorClass addObject = new OfficialInspectorClass();
-                        String compareId = records[i].Id;
-                        try
-                        {
-                            var records2 = client.Query<TempInspectorClass>("SELECT Id, Assigned_Inspections__c, Name, Phone " +
-                                "From Contact " +
-                                "WHERE AccountId='" + compareId + "'");
-                            addObject.contactID = records2[0].Id;
-                            addObject.assignedInspections = records2[0].Assigned_Inspections__c;
-                            addObject.Name = records2[0].Name;
-                            addObject.accountId = records[i].Id;
-                            if (records[i].BillingPostalCode.Length < 5)
-                            {
-                                addObject.BillingPostalCode = ("0" + records[i].BillingPostalCode);
-                            }
-                            else
-                            {
-                                addObject.BillingPostalCode = records[i].BillingPostalCode;
-                            }
-                            if (records[i].ShippingPostalCode.Length < 5)
-                            {
-                                addObject.ShippingPostalCode = ("0" + records[i].ShippingPostalCode);
-                            }
-                            else
-                            {
-                                addObject.ShippingPostalCode = records[i].ShippingPostalCode;
-                            }
-                            addObject.Phone = records2[0].Phone;
-                            addObject.HUD_Certified__c = records[i].HUD_Certified__c;
-                            addObject.Inspector_Ranking__c = records[i].Inspector_Ranking__c;
-                            addObject.Status__c = records[i].Status__c;
-                            addObject.Comments__c = records[i].Comments__c;
-                            addObject.Rep_ID__c = records[i].Rep_ID__c;
-                            addObject.FNMA_Certified__c = records[i].FNMA_Certified__c;
-                            addObject.Freddie_Mac_Certified__c = records[i].Freddie_Mac_Certified__c;
-                            addObject.feeDictionary = new Dictionary<string, double?>();
-                            addObject.feeDictionary.Add("Cap. Improv.", records[i].Cap_Improv__c);
-                            addObject.feeDictionary.Add("CMSA", records[i].CMSA__c);
-                            addObject.feeDictionary.Add("FNMA / 4260", records[i].FNMA_4260__c);
-                            addObject.feeDictionary.Add("FNMA / 4261", records[i].FNMA_4261__c);
-                            addObject.feeDictionary.Add("FNMA / 4262", records[i].FNMA_4262__c);
-                            addObject.feeDictionary.Add("FNMA MF-MBA", records[i].FNMA_MF_MBA__c);
-                            addObject.feeDictionary.Add("Freddie HC-MBA", records[i].Freddie_HC_MBA__c);
-                            addObject.feeDictionary.Add("Freddie MF-MBA", records[i].Freddie_MF_MBA__c);
-                            addObject.feeDictionary.Add("HUD REAC", records[i].HUD_REAC__c);
-                            addObject.feeDictionary.Add("MBA", records[i].MBA__c);
-                            addObject.feeDictionary.Add("MBA-2", records[i].MBA_2__c);
-                            addObject.feeDictionary.Add("No Contact", records[i].No_Contact__c);
-                            addObject.feeDictionary.Add("Rush", records[i].Inspector_Rush__c);
-                            addObject.feeDictionary.Add("CMSA-2", records[i].CMSA_2__c);
-                            addObject.feeDictionary.Add("Exterior 1", records[i].Exterior_1__c);
-                            addObject.feeDictionary.Add("FNMA HC-MBA", records[i].FNMA_HC_MBA__c);
-                            addObject.feeDictionary.Add("Exterior 2", records[i].Exterior_2__c);
-                            addObject.feeDictionary.Add("CME - HC", records[i].CME_HC__c);
-                            addObject.feeDictionary.Add("CME - MF", records[i].CME_MF__c);
-                            String Json2 = "";
-                            
-                            /*using (var client1 = new HttpClient())
-                            {
-                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
-                                    + mapKey + "&location=" + addObject.ShippingPostalCode);
-                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
-                                request.Headers.Add("X-PrettyPrint", "1");
-                                var response = client1.SendAsync(request).Result;
-                                Json2 = response.Content.ReadAsStringAsync().Result;
-                            }*/
-                            //LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
-                            //coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(Json2);
-                            //var array = coordinates.results.ToArray();
-                            //var array2 = array[0].locations.ToArray();
-                            if (records[i].ShippingLongitude != null & records[i].ShippingLatitude != null)
-                            {
-                                addObject.latitude = records[i].ShippingLatitude;
-                                addObject.longitute = records[i].ShippingLongitude;
-                            }
-                            else
-                            {
-                                using (var client1 = new HttpClient())
-                                {
-                                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
-                                        + mapKey + "&location=" + addObject.ShippingPostalCode);
-                                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
-                                    request.Headers.Add("X-PrettyPrint", "1");
-                                    var response = client1.SendAsync(request).Result;
-                                    Json2 = response.Content.ReadAsStringAsync().Result;
-                                }
-                                LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
-                                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(Json2);
-                                var array = coordinates.results.ToArray();
-                                var array2 = array[0].locations.ToArray();
-                                addObject.latitude = array2[0].displayLatLng.lat;
-                                addObject.longitute = array2[0].displayLatLng.lng;
-                                UpdateCoordinatesClass update5 = new UpdateCoordinatesClass();
-                                update5.ShippingLatitude = addObject.latitude;
-                                update5.ShippingLongitude = addObject.longitute;
-                                client.Update("Account", addObject.accountId, update5);
-                            }
-                            OfficialInspectorList.Add(addObject);
-                        }
-                        catch (System.FormatException e)
-                        {
-                            missedSeconds.Add(i);
-                        }
-                    }
-                    progress.Report("Records Processed: " + i + " of " + records.Count);
-                
-                
-                }
-                //saves database to .bin file
-                string saveFile;
-                if (!HUDmode)
-                {
-                    saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "nonhudinspectors.bin");
-                }
-                else{
-                    saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "hudinspectors.bin");
-                }
-                    using (Stream stream = File.Open(saveFile, FileMode.Create))
-                {
-                    var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    formatter.Serialize(stream, OfficialInspectorList);
-                }
-            }
-        }
-
+        //this function is for the back arrow button on the results page
         private void Back_ten_Click(object sender, RoutedEventArgs e)
         {
             if (currentten == 0)
@@ -443,7 +300,7 @@ namespace WpfApp1
                 Page_count.Visibility = Visibility.Visible;
             }
         }
-
+        //this function is for the next arrow button on the results page
         private void Next_ten_Click(object sender, RoutedEventArgs e)
         {
             currentten = currentten + 1;
@@ -477,13 +334,13 @@ namespace WpfApp1
             ten_list_box.Visibility = Visibility.Visible;
             Page_count.Visibility = Visibility.Visible;
         }
-
+        //this function is for when a button is clicked on the middle list, which lists the inspections in the assign queue
         private void Assign_List(object sender, RoutedEventArgs e)
         {
             orderNumberSearch = (e.Source as Button).Content.ToString().Substring(0, 6);
             SearchResults();
         }
-
+        //this function is for the button to take you to the change date page from the results page
         private void Change_Date_Click(object sender, RoutedEventArgs e)
         {
             Results_Page.Visibility = Visibility.Collapsed;
@@ -491,7 +348,7 @@ namespace WpfApp1
             Change_Date_Page.Visibility = Visibility.Visible;
             NewDateBox.Focus();
         }
-
+        //this function is the search function, creates a results page from an order number
         private void SearchResults()
         {
             currentten = 0;
@@ -639,7 +496,7 @@ namespace WpfApp1
 
             }
         }
-
+        //this function is for the change date button on the change date page
         private void Change_date_button_Click(object sender, RoutedEventArgs e)
         {
             UpdateDateClass newDate = new UpdateDateClass();
@@ -650,7 +507,7 @@ namespace WpfApp1
             orderNumberSearch = currentInspection.Name;
             SearchResults();
         }
-
+        //this function links the enter button on the change date box to the change date button on the change date page
         private void NewDateBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -658,7 +515,7 @@ namespace WpfApp1
                 Change_date_button_Click(this, new RoutedEventArgs());
             }
         }
-
+        //this button changes the page from the results page to the view fees page
         private void Fees_Button_Click(object sender, RoutedEventArgs e)
         {
             Results_Page.Visibility = Visibility.Collapsed;
@@ -712,21 +569,21 @@ namespace WpfApp1
 
             }
         }
-
+        //this function is for the button that returns you to the results page from the change date page
         private void Cancel_date_button_Click(object sender, RoutedEventArgs e)
         {
             Change_Date_Page.Visibility = Visibility.Collapsed;
             orderNumberSearch = currentInspection.Name;
             SearchResults();
         }
-
+        //this function is for the button that moves you from the results page to the change adhoc page
         private void Change_Adhoc_Click(object sender, RoutedEventArgs e)
         {
             Results_Page.Visibility = Visibility.Collapsed;
             newAdhocBox.Text = currentInspection.ADHOC__c;
             Change_Adhoc_page.Visibility = Visibility.Visible;
         }
-
+        //this button is the confirm button on the change adhoc page, saves the new adhoc
         private void Save_adhoc_button_Click(object sender, RoutedEventArgs e)
         {
             UpdateAdhocClass updateAdhoc = new UpdateAdhocClass();
@@ -737,21 +594,21 @@ namespace WpfApp1
             currentInspection.ADHOC__c = updateAdhoc.ADHOC__c;
             SearchResults();
         }
-
+        //this button returns you from the change adhoc page to the results page
         private void Cancel_ADHOC_Click(object sender, RoutedEventArgs e)
         {
             Change_Adhoc_page.Visibility = Visibility.Collapsed;
             orderNumberSearch = currentInspection.Name;
             SearchResults();
         }
-
+        //the button returns you from the view fees page to the results page
         private void fees_return_Click(object sender, RoutedEventArgs e)
         {
             orderNumberSearch = currentInspection.Name;
             Fees_page.Visibility = Visibility.Collapsed;
             SearchResults();
         }
-
+        //this button adds the remote fee to the inspection, on the view fees page
         private void fees_submit_Click(object sender, RoutedEventArgs e)
         {
             if (remote_box.Text != "")
@@ -797,6 +654,16 @@ namespace WpfApp1
                 remote_prompt.Text = "Please enter a number:";
             }
         }
+
+        //this function links the textbox with the remote fees to the submit button on the view fees page
+        private void remote_box_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                fees_submit_Click(this, new RoutedEventArgs());
+            }
+        }
+        //this button creates strings for the closest inspectors list box on the results page, returns a list
         private String createTenString(int i, String fnmaString, String fmacString)
         {
             String newtenString;
@@ -818,9 +685,11 @@ namespace WpfApp1
             }
             return newtenString;
         }
-
+        //this button sorts the list based on which drop down option you choose. Sorting isn't always the same though,
+        //but i don't know how to make it consistent
         private void sort_button_Click(object sender, RoutedEventArgs e)
         {
+            //-1 means no option was chosen on the drop down box
             if(sort_box.SelectedIndex == -1)
             {
 
@@ -837,7 +706,8 @@ namespace WpfApp1
                 Assign_queue.Visibility = Visibility.Visible;
             }
         }
-
+        //this is the function that does the actual sorting, used by search results and sort button functions
+        //this function also builds a list of inspections in the assign queue, based on HUD or non HUD mode
         private List<String> sortAssignQueue()
         {
             List<String> queue = new List<String>();
@@ -851,10 +721,10 @@ namespace WpfApp1
                 }
                 if (!HUDmode)
                 {
-                    //InspectionJSONClass checkI = findInspectionbyOrderNumber(iassign[i].Name, client);
+
                     if (iassign[i].Inspection_Folder__c == null || iassign[i].ADHOC__c.Contains("HUD") || iassign[i].ADHOC__c.Contains("OCI - Hold"))
                     {
-                        //Console.WriteLine("This won't be added");
+                        //These inspections won't be added to the list
                     }
                     else
                     {
@@ -879,7 +749,7 @@ namespace WpfApp1
                 {
                     if (iassign[i].Inspection_Folder__c != null || !iassign[i].ADHOC__c.Contains("HUD") || iassign[i].ADHOC__c == "OCI - Hold")
                     {
-                        //Console.WriteLine("This won't be added");
+                        //These inspections won't be added to the list
                     }
                     else
                     {
@@ -901,18 +771,22 @@ namespace WpfApp1
                     }
                 }
             }
+            //sorts by name
             if (SortNumber == 0)
             {
                 worker.Sort((x, y) => x.Name.CompareTo(y.Name));
             }
+            //sorts by region EAST vs WEST
             else if (SortNumber == 1)
             {
                 worker.Sort((x, y) => x.Region__c.CompareTo(y.Region__c));
             }
+            //Sorts by adhoc
             else if (SortNumber == 2)
             {
                 worker.Sort((x, y) => x.ADHOC__c.CompareTo(y.ADHOC__c));
             }
+            //puts the fnma inspections on the top of the list
             else if (SortNumber == 3)
             {
                 for (int i = 0; i < worker.Count; i++)
@@ -925,6 +799,7 @@ namespace WpfApp1
                     }
                 }
             }
+            //puts the freddie inspections on the top of the list
             else if (SortNumber == 4)
             {
                 for (int i = 0; i < worker.Count; i++)
@@ -937,13 +812,14 @@ namespace WpfApp1
                     }
                 }
             }
+            //this finally puts the inspections into a string for the buttons in the middle
             for(int i = 0; i < worker.Count; i++)
             {
                 queue.Add(worker[i].Name + "\nADHOC: " + worker[i].ADHOC__c + "\nRegion: " + worker[i].Region__c);
             }
             return queue;
         }
-
+        //this function links the textbox to the change adhoc button on the change adhoc page
         private void newAdhocBox_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
@@ -951,21 +827,21 @@ namespace WpfApp1
                 Save_adhoc_button_Click(this, new RoutedEventArgs());
             }
         }
-
+        //this is to set the mode to NON HUD for the program, second page after login
         private void Non_Hud_button_Click(object sender, RoutedEventArgs e)
         {
             HUDmode = false;
             mode_page.Visibility = Visibility.Collapsed;
             Rebuild_page.Visibility = Visibility.Visible;
         }
-
+        //this is to set the mode to HUD for the program, second page after login
         private void Hud_button_Click(object sender, RoutedEventArgs e)
         {
             HUDmode = true;
             mode_page.Visibility = Visibility.Collapsed;
             Rebuild_page.Visibility = Visibility.Visible;
         }
-
+        //This function is for the new assigning idea
         private void ten_list_box_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ten_list_box.SelectedIndex == -1)
@@ -985,14 +861,6 @@ namespace WpfApp1
                 {
                     assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex].contactID);
                 }
-            }
-        }
-
-        private void remote_box_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Enter)
-            {
-                fees_submit_Click(this, new RoutedEventArgs());
             }
         }
     }//nothing goes below here
