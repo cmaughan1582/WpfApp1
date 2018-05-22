@@ -531,7 +531,7 @@ namespace WpfApp1
                 remote_prompt.Text = "Please assign before adding remote fees!";
                 inspector_fees.Text = "Inspector Fee:";
                 fees_assigned.Text = "Assigned to:";
-                remote_fees.Text = "Other Fees:";
+                remote_fees.Text = "Other Fees: $" + currentInspection.Inspector_Fees__c;
                 Fees_page.Visibility = Visibility.Visible;
             }
             else
