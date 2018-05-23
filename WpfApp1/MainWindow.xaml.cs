@@ -55,45 +55,39 @@ namespace WpfApp1
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
             }
             login_page.Visibility = Visibility.Visible;
-            if (!loginExists)
-            {
-                credentials.Add("username", "files@s2inspect.com");
-                credentials.Add("password", "5200@Holladay");
-                credentials.Add("securityToken", "3U3rVWo6TYVWJMhccR7hO9bhn");
-                string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "logininfo.bin");
-                using (Stream stream = File.Open(saveFile, FileMode.Create))
-                {
-                    var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    formatter.Serialize(stream, credentials);
-                }
-            }
-            else
-            {
-                string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "logininfo.bin");
-                using (Stream stream = File.Open(saveFile, FileMode.Open))
-                {
-                    var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
-                    credentials = (Dictionary<String, String>)bformatter.Deserialize(stream);
-                }
-            }
         }
 
         //LOGIN PAGE FUNCTIONS
         //this function is for the initial login button
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            login_page.Visibility = Visibility.Collapsed;
-            var authflow = new UsernamePasswordAuthenticationFlow(clientID, consumerSecret, credentials["username"], credentials["password"] + credentials["securityToken"]);
-            try
+            
+            string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "logininfo.bin");
+            if (File.Exists(saveFile))
             {
-                client.Authenticate(authflow);
-                mode_page.Visibility = Visibility.Visible;
+                using (Stream stream = File.Open(saveFile, FileMode.Open))
+                {
+                    var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
+                    credentials = (Dictionary<String, String>)bformatter.Deserialize(stream);
+                }
+                login_page.Visibility = Visibility.Collapsed;
+                var authflow = new UsernamePasswordAuthenticationFlow(clientID, consumerSecret, credentials["username"], credentials["password"] + credentials["securityToken"]);
+                try
+                {
+                    client.Authenticate(authflow);
+                    mode_page.Visibility = Visibility.Visible;
+
+                }
+                catch (SalesforceException ex)
+                {
+                    Login_Prompt.Text = "Those Credentials didn't work, please enter new info.";
+                }
             }
-            catch (SalesforceException ex)
+            else
             {
-                return;
+                Login_Prompt.Text = "No Saved Login info found, please enter new info.";
             }
         }
 
@@ -967,6 +961,45 @@ namespace WpfApp1
             {
                 fees_submit_Click(this, new RoutedEventArgs());
             }
+        }
+
+        private void New_credentials_Click(object sender, RoutedEventArgs e)
+        {
+            login_page.Visibility = Visibility.Collapsed;
+            credentials_text.Text = "Enter New Information Below:";
+            PasswordBox.Text = "";
+            UsernameBox.Text = "";
+            SecurityTokenBox.Text = "";
+            credentials_page.Visibility = Visibility.Visible;
+        }
+
+        private void Submit_credentials_Click(object sender, RoutedEventArgs e)
+        {
+            if (UsernameBox.Text == "" || PasswordBox.Text == "" || SecurityTokenBox.Text == "")
+            {
+                credentials_text.Text = "Please don't leave any boxes empty!";
+            }
+            else
+            {
+                credentials.Add("username", UsernameBox.Text);
+                credentials.Add("password", PasswordBox.Text);
+                credentials.Add("securityToken", SecurityTokenBox.Text);
+                string saveFile = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "logininfo.bin");
+                using (Stream stream = File.Open(saveFile, FileMode.Create))
+                {
+                    var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    formatter.Serialize(stream, credentials);
+                }
+                credentials_page.Visibility = Visibility.Collapsed;
+                Login_Prompt.Text = "Click the Button Below to Login";
+                login_page.Visibility = Visibility.Visible;
+            }
+        }
+        private void return_credentials_Click(object sender, RoutedEventArgs e)
+        {
+            credentials_page.Visibility = Visibility.Collapsed;
+            Login_Prompt.Text = "Click the Button Below to Login";
+            login_page.Visibility = Visibility.Visible;
         }
     }//nothing goes below here
 }

@@ -10,13 +10,17 @@
     <Canvas RenderTransformOrigin="0.499,0.505" Name="Canvas1" Margin="0,0,0,0">
 
         <!--This is the starting page contents-->
-        <Canvas Name="login_page" Visibility="Collapsed">
+        <Canvas Name="login_page" Visibility="Visible">
             <TextBlock Name="Welcome_Text" Visibility="Visible" Canvas.Left="0" TextWrapping="Wrap" Text="Welcome to the S2Inspections Assigning App!" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=Canvas1}"  FontSize="36" TextAlignment="Center" Canvas.Top="38"/>
             <TextBlock Name="Login_Prompt" Visibility="Visible" Canvas.Left="0" TextWrapping="Wrap" Text="Click the Button Below to Login" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=Canvas1}" FontSize="24" TextAlignment="Center" Canvas.Top="105"/>
-            <Grid Name="Loginbuttongrid" Visibility="Visible" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="191">
+            <Grid Name="Loginbuttongrid" Visibility="Visible" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="155">
                 <Button Name="Login_Button" HorizontalAlignment="Center" Content="Login" Width="74" Click="Button_Click_2"/>
             </Grid>
             <TextBlock Name="Logging_in" Visibility="Collapsed" Canvas.Left="0" TextWrapping="Wrap" Width="{Binding ActualWidth, ElementName=Canvas1}" Text="Logging In..." FontSize="36" TextAlignment="Center" Canvas.Top="201"/>
+            <TextBlock Visibility="Visible" Canvas.Left="0" TextWrapping="Wrap" Text="Or Change Your Login Information" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=Canvas1}" FontSize="18" TextAlignment="Center" Canvas.Top="218"/>
+            <Grid Visibility="Visible" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="265">
+                <Button Name="New_credentials" HorizontalAlignment="Center" Content="New Info" Width="74" Click="New_credentials_Click"/>
+            </Grid>
         </Canvas>
 
         <!--rebuild page-->
@@ -104,13 +108,13 @@
             <TextBlock Canvas.Left="515" TextWrapping="Wrap" Text="Sort By:" Canvas.Bottom="15"/>
             <Button Name="sort_button" Content="Sort" Canvas.Left="695" Canvas.Bottom="10" Height="23" Width="40" Click="sort_button_Click"/>
         </Canvas>
-        
+
         <!--This is the progression screen-->
         <Canvas Name="rebuild_progress" Visibility="Collapsed">
             <TextBlock Name="Building_database" Canvas.Left="0" TextWrapping="Wrap" Text="Building Database..." Canvas.Top="38" Width="{Binding ActualWidth, ElementName=Canvas1}" TextAlignment="Center" FontSize="36"/>
             <TextBlock Name="Records_text" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="Records Processed: 0" Canvas.Top="93" FontSize="24" TextAlignment="Center"/>
         </Canvas>
-        
+
         <!--This is the modify date page-->
         <Canvas Name="Change_Date_Page" Visibility="Collapsed">
             <TextBlock Text="Enter New Date in YYYY-MM-DD Format:" Width="{Binding ActualWidth, ElementName=Canvas1}" FontSize="36" Canvas.Left="0" Canvas.Top="97" TextAlignment="Center" FontWeight="Bold"/>
@@ -124,7 +128,7 @@
                 <Button Name="Cancel_date_button" Content="Cancel" Canvas.Left="363" Canvas.Top="244" Width="74" Click="Cancel_date_button_Click"  HorizontalAlignment="Center"/>
             </Grid>
         </Canvas>
-        
+
         <!--This is the modify adhoc page-->
         <Canvas Name="Change_Adhoc_page" Visibility="Collapsed">
             <TextBlock Text="Enter new ADHOC:" Width="{Binding ActualWidth, ElementName=Canvas1}" FontSize="36" Canvas.Left="0" Canvas.Top="97" TextAlignment="Center" FontWeight="Bold"/>
@@ -138,7 +142,7 @@
                 <Button Name="Cancel_ADHOC" Content="Cancel" Canvas.Left="363" Canvas.Top="244" Width="74" Click="Cancel_ADHOC_Click"  HorizontalAlignment="Center"/>
             </Grid>
         </Canvas>
-        
+
         <!--This is the fees page-->
         <Canvas Name="Fees_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
             <TextBlock Name="fees_order" Canvas.Left="5" TextWrapping="Wrap" Text="888888" Canvas.Top="5" FontSize="36" FontWeight="Bold" Width="181"/>
@@ -152,7 +156,7 @@
             <Button Name="fees_return" Content="Return" Canvas.Left="10" Canvas.Bottom="20" Width="76" Click="fees_return_Click"/>
             <TextBlock Name="fees_type" Canvas.Left="146" TextWrapping="Wrap" Text="Fee Type: " Canvas.Top="30" FontSize="18"/>
         </Canvas>
-        
+
         <!--This is the choose mode page-->
         <Canvas Name="mode_page" Visibility="Collapsed">
             <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Choose HUD or Non-HUD Mode" Canvas.Top="54" Width="{Binding ActualWidth, ElementName=Window1}" FontSize="36" TextAlignment="Center" FontWeight="Bold"/>
@@ -163,7 +167,21 @@
                 <Button Name="Hud_button" Content="HUD" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
             </Grid>
         </Canvas>
+
+        <Canvas Name="credentials_page" Visibility="Collapsed">
+            <TextBlock Name="credentials_text" Canvas.Left="0" TextWrapping="Wrap" Text="Enter Login Information Below" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="30" FontSize="36" TextAlignment="Center"/>
+            <TextBlock Canvas.Left="100" TextWrapping="Wrap" Text="Username:" Canvas.Top="120"/>
+            <TextBlock Canvas.Left="100" TextWrapping="Wrap" Text="Password:" Canvas.Top="150"/>
+            <TextBlock Canvas.Left="100" TextWrapping="Wrap" Text="Security Token:" Canvas.Top="180"/>
+            <TextBox Name="UsernameBox" Height="22" Canvas.Left="190" TextWrapping="NoWrap" Text="" Canvas.Top="119" Width="120"/>
+            <TextBox Name="PasswordBox" Height="22" Canvas.Left="190" TextWrapping="NoWrap"  Text="" Canvas.Top="149" Width="120"/>
+            <TextBox Name="SecurityTokenBox" Height="22" Canvas.Left="190" TextWrapping="NoWrap" Text="" Canvas.Top="179" Width="120"/>
+            <Button Name="Submit_credentials" Content="Submit" Canvas.Left="212" Canvas.Top="218" Width="76" Click="Submit_credentials_Click"/>
+            <Button Name="return_credentials" Content="Cancel" Canvas.Left="212" Canvas.Top="245" Width="76" Click="return_credentials_Click"/>
+        </Canvas>
         
+
+
 
     </Canvas>
 </Window>
