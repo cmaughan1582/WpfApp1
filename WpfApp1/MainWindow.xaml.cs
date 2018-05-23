@@ -14,10 +14,7 @@ namespace WpfApp1
 {
 
     /* TODO
-    HUD only assigning option DONE
-    Include sort option for middle list DONE
-    Multiple Assign DONE? Maybe add "assigning records, 1 of x done page like the database thing"
-    ask jed if he still wants the multiple assign option even though it doesn't save any time
+        nothing at the moment.....things are looking pretty good right now
     */
 
     /// <summary>
@@ -25,6 +22,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        String highlightID = "";
         Dictionary<String, String> assignDict = new Dictionary<String, String>();
         Boolean HUDmode = false;
         Dictionary<String, String> credentials = new Dictionary<String, String>();
@@ -629,7 +627,17 @@ namespace WpfApp1
             {
                 if (assignDict.ContainsKey(currentInspection.Id))
                 {
-                    assignDict.Remove(currentInspection.Id);
+                    //assignDict.Remove(currentInspection.Id);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        int modifier = currentten * 10;
+                        int j = i + modifier;
+                        if (workingList[j].contactID == assignDict[currentInspection.Id])
+                        {
+                            ten_list_box.SelectedIndex = i;
+                        }
+                    }
+
                 }
             }
             else
