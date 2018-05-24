@@ -181,7 +181,7 @@
         </Canvas>
 
         <Canvas Name="Searching_Page" Visibility="Collapsed">
-            <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Searching..." FontWeight="Bold" Canvas.Top="60" FontSize="48" TextAlignment="Center" Width="{Binding ActualWidth, ElementName=Canvas1}"/>
+            <TextBlock Name="Searching_text" Canvas.Left="0" TextWrapping="Wrap" Text="Searching..." FontWeight="Bold" Canvas.Top="60" FontSize="48" TextAlignment="Center" Width="{Binding ActualWidth, ElementName=Canvas1}"/>
         </Canvas>
 
 

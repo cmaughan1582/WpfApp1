@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Timers;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        int searchint = 0;
         List<String> ih = new List<String>();
         String highlightID = "";
         Dictionary<String, String> assignDict = new Dictionary<String, String>();
@@ -206,141 +208,65 @@ namespace WpfApp1
 
             Results_Page.Visibility = Visibility.Collapsed;
             Searching_Page.Visibility = Visibility.Visible;
+            Timer searchtimer = new Timer(1000);
+            searchtimer.Elapsed += searchDots;
+            searchtimer.Enabled = true;
+            searchtimer.AutoReset = true;
             int searchnum = await Task.Factory.StartNew(() => searchhelp(),
                 TaskCreationOptions.LongRunning);
-            
-            /*if (reSearch)
+            searchtimer.Stop();
+            if (searchnum == 1)
             {
-                currentInspection = findInspectionbyOrderNumber(orderNumberSearch, client);
-            }
-            if (currentInspection != null)
-            {
-                assignNames = new List<String>();
-                sortByDistance(client);
-                tenInspectors = new List<String>();
-                for (int i = 0; i < 10; i++)
+                assignNames = sortAssignQueue();
+                Region.Text = currentInspection.Region__c;
+                Assign_queue.Visibility = Visibility.Collapsed;
+                Assign_queue.ItemsSource = null;
+                Assign_queue.ItemsSource = assignNames;
+                History_List.ItemsSource = null;
+                History_List.ItemsSource = ih;
+                ten_list_box.ItemsSource = null;
+                object top = tenInspectors[0];
+                object atop = assignNames[0];
+                ten_list_box.ItemsSource = tenInspectors;
+                ten_list_box.ScrollIntoView(top);
+                Order_number.Text = currentInspection.Name;
+                Form_Name.Text = ("ADHOC: " + currentInspection.ADHOC__c);
+                City_Name.Text = (currentInspection.City__c + ", " + currentInspection.State__c);
+                inspectionHistoryHeight = Canvas1.ActualHeight - 122.0 - 50.0;
+                History_List.Height = inspectionHistoryHeight;
+                Assign_queue.Height = inspectionHistoryHeight;
+                Search_Box2.Text = "";
+                Assigned_Rep.Text = ("Assigned to: " + currentInspection.Inspector_Rep_ID__c);
+                if (currentInspection.Inspector_Due_Date__c != null)
                 {
-                    String fnmaString;
-                    String fmacString;
-                    if (!HUDmode)
-                    {
-                        fnmaString = "No";
-                        fmacString = "No";
-                        if (workingList[i].FNMA_Certified__c == true)
-                        {
-                            fnmaString = "Yes";
-                        }
-                        if (workingList[i].Freddie_Mac_Certified__c == true)
-                        {
-                            fmacString = "Yes";
-                        }
-                    }
-                    else
-                    {
-                        fnmaString = "No";
-                        fmacString = "No";
-                        if (workingList[i].HUD_Certified__c == true)
-                        {
-                            fmacString = "Yes";
-                        }
-                    }
-
-                    String newString = createTenString(i, fnmaString, fmacString);
-                    tenInspectors.Add(newString);
+                    Inspector_due.Text = ("Inspector Due Date: " + currentInspection.Inspector_Due_Date__c.Substring(5, 5));
                 }
-                var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND ((Field='Rep_ID_Inspector_history_tracking__c') OR (Field='Inspector_Rejected_Reason__c'))");
-                List<HistoryClass> historyList = new List<HistoryClass>();
-                for (int i = 0; i < history.Count; i++)
+                else
                 {
-                    if (history[i].Field.Equals("Rep_ID_Inspector_history_tracking__c") && history[i].NewValue.Equals("-") && history[i].OldValue != null)
-                    {
-                        historyList.Add(history[i]);
-                    }
-                    else if (history[i].Field.Equals("Inspector_Rejected_Reason__c") && history[i].OldValue == null)
-                    {
-                        historyList.Add(history[i]);
-                    }
-
+                    Inspector_due.Text = "Inspector Due Date:";
                 }
-                historyList.Sort((x, y) => x.CreatedDate.CompareTo(y.CreatedDate));
-                List<String> ih = new List<String>();
-                for (int i = (historyList.Count - 1); i >= 0; i--)
+                Client_due.Text = ("Client Due Date: " + currentInspection.Client_Due_Date__c.Substring(5, 5));
+                Page_count.Text = ("" + (currentten + 1));
+                FormClass newForm = new FormClass();
+                newForm = client.FindById<FormClass>("Form__c", currentInspection.Form_Name__c);
+                Form_name.Text = ("Form: " + newForm.Name);
+                if (currentInspection.Inspection_Folder__c != null)
                 {
-                    String addstring = "";
-                    if (historyList[i].Field.Equals("Rep_ID_Inspector_history_tracking__c"))
-                    {
-                        if (i == 0)
-                        {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": No declined reason given.");
-                            ih.Add(addstring);
-                        }
-                        else if (historyList[i - 1].Field.Equals("Inspector_Rejected_Reason__c"))
-                        {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": " + historyList[i - 1].NewValue);
-                            ih.Add(addstring);
-                        }
-                        else
-                        {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": No declined reason given.");
-                            ih.Add(addstring);
-                        }
-                    }
+                    Folder_text.Text = "Folder: Yes";
                 }
-
-            }*/
-                if (searchnum == 1)
+                else
                 {
-                    assignNames = sortAssignQueue();
-                    Region.Text = currentInspection.Region__c;
-                    Assign_queue.Visibility = Visibility.Collapsed;
-                    Assign_queue.ItemsSource = null;
-                    Assign_queue.ItemsSource = assignNames;
-                    History_List.ItemsSource = null;
-                    History_List.ItemsSource = ih;
-                    ten_list_box.ItemsSource = null;
-                    object top = tenInspectors[0];
-                    object atop = assignNames[0];
-                    ten_list_box.ItemsSource = tenInspectors;
-                    ten_list_box.ScrollIntoView(top);
-                    Order_number.Text = currentInspection.Name;
-                    Form_Name.Text = ("ADHOC: " + currentInspection.ADHOC__c);
-                    City_Name.Text = (currentInspection.City__c + ", " + currentInspection.State__c);
-                    inspectionHistoryHeight = Canvas1.ActualHeight - 122.0 - 50.0;
-                    History_List.Height = inspectionHistoryHeight;
-                    Assign_queue.Height = inspectionHistoryHeight;
-                    Search_Box2.Text = "";
-                    Assigned_Rep.Text = ("Assigned to: " + currentInspection.Inspector_Rep_ID__c);
-                    if (currentInspection.Inspector_Due_Date__c != null)
-                    {
-                        Inspector_due.Text = ("Inspector Due Date: " + currentInspection.Inspector_Due_Date__c.Substring(5, 5));
-                    }
-                    else
-                    {
-                        Inspector_due.Text = "Inspector Due Date:";
-                    }
-                    Client_due.Text = ("Client Due Date: " + currentInspection.Client_Due_Date__c.Substring(5, 5));
-                    Page_count.Text = ("" + (currentten + 1));
-                    FormClass newForm = new FormClass();
-                    newForm = client.FindById<FormClass>("Form__c", currentInspection.Form_Name__c);
-                    Form_name.Text = ("Form: " + newForm.Name);
-                    if (currentInspection.Inspection_Folder__c != null)
-                    {
-                        Folder_text.Text = "Folder: Yes";
-                    }
-                    else
-                    {
-                        Folder_text.Text = "Folder: No";
-                    }
+                    Folder_text.Text = "Folder: No";
+                }
                 Searching_Page.Visibility = Visibility.Collapsed;
-                    Assign_queue.Visibility = Visibility.Visible;
-                    Results_Page.Visibility = Visibility.Visible;
-                }
+                Assign_queue.Visibility = Visibility.Visible;
+                Results_Page.Visibility = Visibility.Visible;
+            }
             
             else if(searchnum == 0)
             {
+                Searching_Page.Visibility = Visibility.Collapsed;
+                Search_Prompt.Text = "The search failed, please enter an order number";
                 First_Search_Box1.Text = "";
                 Search_Page.Visibility = Visibility.Visible;
                 First_Search_Box1.Focus();
@@ -348,95 +274,131 @@ namespace WpfApp1
             }
         }
 
+        private void searchDots(Object source, ElapsedEventArgs e)
+        {
+            if (searchint == 0)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Searching_text.Text = "Searching.";
+                    searchint = 1;
+                });
+            }
+            else if (searchint == 1)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Searching_text.Text = "Searching..";
+                    searchint = 2;
+                });
+            }
+            else if (searchint == 2)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Searching_text.Text = "Searching...";
+                    searchint = 0;
+                });
+            }
+        }
+
         //SEARCH HELPER FUNCTIONS
+        //This method is created to support threading
         private int searchhelp()
         {
-            if (reSearch)
+            try
             {
-                currentInspection = findInspectionbyOrderNumber(orderNumberSearch, client);
-            }
-            if (currentInspection != null)
-            {
-                assignNames = new List<String>();
-                sortByDistance(client);
-                tenInspectors = new List<String>();
-                for (int i = 0; i < 10; i++)
+                if (reSearch)
                 {
-                    String fnmaString;
-                    String fmacString;
-                    if (!HUDmode)
-                    {
-                        fnmaString = "No";
-                        fmacString = "No";
-                        if (workingList[i].FNMA_Certified__c == true)
-                        {
-                            fnmaString = "Yes";
-                        }
-                        if (workingList[i].Freddie_Mac_Certified__c == true)
-                        {
-                            fmacString = "Yes";
-                        }
-                    }
-                    else
-                    {
-                        fnmaString = "No";
-                        fmacString = "No";
-                        if (workingList[i].HUD_Certified__c == true)
-                        {
-                            fmacString = "Yes";
-                        }
-                    }
-
-                    String newString = createTenString(i, fnmaString, fmacString);
-                    tenInspectors.Add(newString);
+                    currentInspection = findInspectionbyOrderNumber(orderNumberSearch, client);
                 }
-                var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND ((Field='Rep_ID_Inspector_history_tracking__c') OR (Field='Inspector_Rejected_Reason__c'))");
-                List<HistoryClass> historyList = new List<HistoryClass>();
-                for (int i = 0; i < history.Count; i++)
+                if (currentInspection != null)
                 {
-                    if (history[i].Field.Equals("Rep_ID_Inspector_history_tracking__c") && history[i].NewValue.Equals("-") && history[i].OldValue != null)
+                    assignNames = new List<String>();
+                    sortByDistance(client);
+                    tenInspectors = new List<String>();
+                    for (int i = 0; i < 10; i++)
                     {
-                        historyList.Add(history[i]);
-                    }
-                    else if (history[i].Field.Equals("Inspector_Rejected_Reason__c") && history[i].OldValue == null)
-                    {
-                        historyList.Add(history[i]);
-                    }
-
-                }
-                historyList.Sort((x, y) => x.CreatedDate.CompareTo(y.CreatedDate));
-                ih = new List<String>();
-                for (int i = (historyList.Count - 1); i >= 0; i--)
-                {
-                    String addstring = "";
-                    if (historyList[i].Field.Equals("Rep_ID_Inspector_history_tracking__c"))
-                    {
-                        if (i == 0)
+                        String fnmaString;
+                        String fmacString;
+                        if (!HUDmode)
                         {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": No declined reason given.");
-                            ih.Add(addstring);
-                        }
-                        else if (historyList[i - 1].Field.Equals("Inspector_Rejected_Reason__c"))
-                        {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": " + historyList[i - 1].NewValue);
-                            ih.Add(addstring);
+                            fnmaString = "No";
+                            fmacString = "No";
+                            if (workingList[i].FNMA_Certified__c == true)
+                            {
+                                fnmaString = "Yes";
+                            }
+                            if (workingList[i].Freddie_Mac_Certified__c == true)
+                            {
+                                fmacString = "Yes";
+                            }
                         }
                         else
                         {
-                            addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
-                                + historyList[i].OldValue + ": No declined reason given.");
-                            ih.Add(addstring);
+                            fnmaString = "No";
+                            fmacString = "No";
+                            if (workingList[i].HUD_Certified__c == true)
+                            {
+                                fmacString = "Yes";
+                            }
+                        }
+
+                        String newString = createTenString(i, fnmaString, fmacString);
+                        tenInspectors.Add(newString);
+                    }
+                    var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND ((Field='Rep_ID_Inspector_history_tracking__c') OR (Field='Inspector_Rejected_Reason__c'))");
+                    List<HistoryClass> historyList = new List<HistoryClass>();
+                    for (int i = 0; i < history.Count; i++)
+                    {
+                        if (history[i].Field.Equals("Rep_ID_Inspector_history_tracking__c") && history[i].NewValue.Equals("-") && history[i].OldValue != null)
+                        {
+                            historyList.Add(history[i]);
+                        }
+                        else if (history[i].Field.Equals("Inspector_Rejected_Reason__c") && history[i].OldValue == null)
+                        {
+                            historyList.Add(history[i]);
+                        }
+
+                    }
+                    historyList.Sort((x, y) => x.CreatedDate.CompareTo(y.CreatedDate));
+                    ih = new List<String>();
+                    for (int i = (historyList.Count - 1); i >= 0; i--)
+                    {
+                        String addstring = "";
+                        if (historyList[i].Field.Equals("Rep_ID_Inspector_history_tracking__c"))
+                        {
+                            if (i == 0)
+                            {
+                                addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
+                                    + historyList[i].OldValue + ": No declined reason given.");
+                                ih.Add(addstring);
+                            }
+                            else if (historyList[i - 1].Field.Equals("Inspector_Rejected_Reason__c"))
+                            {
+                                addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
+                                    + historyList[i].OldValue + ": " + historyList[i - 1].NewValue);
+                                ih.Add(addstring);
+                            }
+                            else
+                            {
+                                addstring = (historyList[i].CreatedDate.Month + "/" + historyList[i].CreatedDate.Day + ": "
+                                    + historyList[i].OldValue + ": No declined reason given.");
+                                ih.Add(addstring);
+                            }
                         }
                     }
+                    return 1;
                 }
-                return 1;
+                else
+                {
+                    return 0;
+
+                }
             }
-            else
+            catch (Exception)
             {
                 return 0;
-
             }
         }
         //this function sorts the working list by distance to the current inspection...used during search results function
