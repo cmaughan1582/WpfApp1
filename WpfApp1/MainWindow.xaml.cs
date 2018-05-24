@@ -1120,5 +1120,14 @@ namespace WpfApp1
             Login_Prompt.Text = "Click the Button Below to Login";
             login_page.Visibility = Visibility.Visible;
         }
+
+        private void reset_inspector_Click(object sender, RoutedEventArgs e)
+        {
+            if (assignDict.ContainsKey(currentInspection.Id))
+            {
+                assignDict.Remove(currentInspection.Id);
+                ten_list_box.SelectedIndex = -1;
+            }
+        }
     }//nothing goes below here
 }

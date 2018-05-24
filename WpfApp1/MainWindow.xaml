@@ -74,6 +74,7 @@
             </ListView>
             <TextBox Name="Search_Box2" KeyDown="Search_Box2_KeyDown"  Height="23" Canvas.Left="100" TextWrapping="Wrap" Text="" Canvas.Bottom="10" Width="120"/>
             <Button Name="Search_Button2" Content="Search" Canvas.Left="226" Canvas.Bottom="10" Height="23" Width="75" Click="Button_Click_4"/>
+            <Button Name="reset_inspector" Content="Reset" Canvas.Right="520" Canvas.Top="10" Height="18" Width="50" Click="reset_inspector_Click"/>
             <TextBlock Name="Assigned_Rep" Canvas.Left="240" TextWrapping="Wrap" Text="Assigned to: UT000" Canvas.Top="55" FontSize="18"/>
             <TextBlock Name="Region" Canvas.Left="455" TextWrapping="Wrap" Text="East" Canvas.Top="55" FontSize="18"/>
             <TextBlock Name="Inspector_due" Canvas.Left="215" TextWrapping="Wrap" Text="Inspector due: 2/18/18" Canvas.Top="80"/>
