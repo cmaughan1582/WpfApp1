@@ -274,6 +274,8 @@ namespace WpfApp1
             }
         }
 
+        //SEARCH HELPER FUNCTIONS
+        //This is a funtion that can update the searching page text
         private void searchDots(Object source, ElapsedEventArgs e)
         {
             if (searchint == 0)
@@ -302,7 +304,6 @@ namespace WpfApp1
             }
         }
 
-        //SEARCH HELPER FUNCTIONS
         //This method is created to support threading
         private int searchhelp()
         {
