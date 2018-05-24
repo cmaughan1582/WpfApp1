@@ -10,7 +10,7 @@
     <Canvas RenderTransformOrigin="0.499,0.505" Name="Canvas1" Margin="0,0,0,0">
 
         <!--This is the starting page contents-->
-        <Canvas Name="login_page" Visibility="Visible">
+        <Canvas Name="login_page" Visibility="Collapsed">
             <TextBlock Name="Welcome_Text" Visibility="Visible" Canvas.Left="0" TextWrapping="Wrap" Text="Welcome to the S2Inspections Assigning App!" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=Canvas1}"  FontSize="36" TextAlignment="Center" Canvas.Top="38"/>
             <TextBlock Name="Login_Prompt" Visibility="Visible" Canvas.Left="0" TextWrapping="Wrap" Text="Click the Button Below to Login" VerticalAlignment="Top" Width="{Binding ActualWidth, ElementName=Canvas1}" FontSize="24" TextAlignment="Center" Canvas.Top="105"/>
             <Grid Name="Loginbuttongrid" Visibility="Visible" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="155">
@@ -161,13 +161,12 @@
         <Canvas Name="mode_page" Visibility="Collapsed">
             <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Choose HUD or Non-HUD Mode" Canvas.Top="54" Width="{Binding ActualWidth, ElementName=Window1}" FontSize="36" TextAlignment="Center" FontWeight="Bold"/>
             <Grid Canvas.Top="140" Width="{Binding ActualWidth, ElementName=Canvas1}">
-                <Button Name="Non_Hud_button" Content="Non-HUD" Width="74" Click="Non_Hud_button_Click" HorizontalAlignment="Center"/>
-            </Grid>
-            <Grid Canvas.Top="175" Width="{Binding ActualWidth, ElementName=Canvas1}">
-                <Button Name="Hud_button" Content="HUD" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
+                <Button Name="Non_Hud_button" Margin="150, 0, 0, 0" Content="Non-HUD" Width="74" Click="Non_Hud_button_Click" HorizontalAlignment="Center"/>
+                <Button Name="Hud_button" Content="HUD" Margin="0, 0, 150, 0" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
             </Grid>
         </Canvas>
 
+        <!--This is the new login info page-->
         <Canvas Name="credentials_page" Visibility="Collapsed">
             <TextBlock Name="credentials_text" Canvas.Left="0" TextWrapping="Wrap" Text="Enter Login Information Below" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="30" FontSize="36" TextAlignment="Center"/>
             <TextBlock Canvas.Left="100" TextWrapping="Wrap" Text="Username:" Canvas.Top="120"/>
@@ -179,7 +178,11 @@
             <Button Name="Submit_credentials" Content="Submit" Canvas.Left="212" Canvas.Top="218" Width="76" Click="Submit_credentials_Click"/>
             <Button Name="return_credentials" Content="Cancel" Canvas.Left="212" Canvas.Top="245" Width="76" Click="return_credentials_Click"/>
         </Canvas>
-        
+
+        <Canvas Name="Searching_Page" Visibility="Collapsed">
+            <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Searching..." FontWeight="Bold" Canvas.Top="60" FontSize="48" TextAlignment="Center" Width="{Binding ActualWidth, ElementName=Canvas1}"/>
+        </Canvas>
+
 
 
 
