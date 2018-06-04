@@ -97,6 +97,7 @@
             </ListView>
             <Button Name="Change_Date" Content="Change" Canvas.Left="375" Canvas.Top="81" Height="15" Width="35" FontSize="8" Click="Change_Date_Click"/>
             <Button Name="Fees_Button" Content="View Fees" Canvas.Left="315" Canvas.Bottom="10" Height="23" Width="75" Click="Fees_Button_Click"/>
+            <Button Name="compare_Button" Content="Past Orders" Canvas.Left="400" Canvas.Bottom="10" Height="23" Width="75" Click="compare_Button_Click"/>
             <Button Name="Change_Adhoc" Content="Change" Canvas.Left="151" Canvas.Top="41" Height="15" Width="35" FontSize="8" Click="Change_Adhoc_Click"/>
             <TextBlock Name="Folder_text" Canvas.Left="515" TextWrapping="Wrap" Text="Folder: Yes" Canvas.Top="55" FontSize="18"/>
             <ComboBox Name="sort_box" Canvas.Left="565" Canvas.Bottom="11" Width="120">
@@ -184,6 +185,20 @@
             <TextBlock Name="Searching_text" Canvas.Left="0" TextWrapping="Wrap" Text="Searching..." FontWeight="Bold" Canvas.Top="60" FontSize="48" TextAlignment="Center" Width="{Binding ActualWidth, ElementName=Canvas1}"/>
         </Canvas>
 
+        <Canvas Name="Compare_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}">
+            <TextBlock Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="Past orders in the same Zip Code" Canvas.Top="28" FontSize="36" FontWeight="Bold" TextAlignment="Center"/>
+            <Grid Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="100">
+                <ListBox Name="compare_list" Height="500"  Width="500" HorizontalAlignment="Center">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Focusable" Value="false"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+            <Button Content="Return" Name="return_compare" Canvas.Bottom="25" Canvas.Left="100" Width="75" Click="return_compare_Click"/>            
+        </Canvas>
+        
 
 
 

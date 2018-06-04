@@ -245,7 +245,14 @@ namespace WpfApp1
                 {
                     Inspector_due.Text = "Inspector Due Date:";
                 }
-                Client_due.Text = ("Client Due Date: " + currentInspection.Client_Due_Date__c.Substring(5, 5));
+                if (currentInspection.Client_Due_Date__c != null)
+                {
+                    Client_due.Text = ("Client Due Date: " + currentInspection.Client_Due_Date__c.Substring(5, 5));
+                }
+                else
+                {
+                    Client_due.Text = "Client Due Date:";
+                }
                 Page_count.Text = ("" + (currentten + 1));
                 FormClass newForm = new FormClass();
                 newForm = client.FindById<FormClass>("Form__c", currentInspection.Form_Name__c);
@@ -406,6 +413,9 @@ namespace WpfApp1
         private void sortByDistance(SalesforceClient client)
         {
             String currentInspectionAddress;
+            String JsonReturn = ("");
+            LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+            //var array;
             if (!currentInspection.Street_Address__c.Contains(","))
             {
                 String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
@@ -415,7 +425,7 @@ namespace WpfApp1
             {
                 currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
             }
-            String JsonReturn = ("");
+            JsonReturn = ("");
             using (var client1 = new HttpClient())
             {
                 String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
@@ -425,10 +435,54 @@ namespace WpfApp1
                 var response = client1.SendAsync(request).Result;
                 JsonReturn = response.Content.ReadAsStringAsync().Result;
             }
-            LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+            coordinates = new LatLngClass.RootObject();
             coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
             var array = coordinates.results.ToArray();
             var array2 = array[0].locations.ToArray();
+            if (array2.Length == 1)
+            {
+
+            }
+            else
+            {
+                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                JsonReturn = ("");
+                using (var client1 = new HttpClient())
+                {
+                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                        + mapKey + "&location=" + currentInspectionAddress);
+                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                    request.Headers.Add("X-PrettyPrint", "1");
+                    var response = client1.SendAsync(request).Result;
+                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                }
+                coordinates = new LatLngClass.RootObject();
+                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                array = coordinates.results.ToArray();
+                array2 = array[0].locations.ToArray();
+                if (array2.Length == 1)
+                {
+
+                }
+                else
+                {
+                    currentInspectionAddress = (currentInspection.Zip_Code__c);
+                    JsonReturn = ("");
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + currentInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    array = coordinates.results.ToArray();
+                    array2 = array[0].locations.ToArray();
+                }
+            }
             double currentInspectionLatitude = array2[0].displayLatLng.lat;
             double currentInspectionLongitute = array2[0].displayLatLng.lng;
             GeoCoordinate currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
@@ -714,11 +768,11 @@ namespace WpfApp1
             {
                 if (assignDict.ContainsKey(currentInspection.Id))
                 {
-                    assignDict[currentInspection.Id] = workingList[ten_list_box.SelectedIndex].contactID;
+                    assignDict[currentInspection.Id] = workingList[ten_list_box.SelectedIndex + (currentten * 10)].contactID;
                 }
                 else
                 {
-                    assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex].contactID);
+                    assignDict.Add(currentInspection.Id, workingList[ten_list_box.SelectedIndex + (currentten * 10)].contactID);
                 }
             }
         }
@@ -1091,6 +1145,32 @@ namespace WpfApp1
                 assignDict.Remove(currentInspection.Id);
                 ten_list_box.SelectedIndex = -1;
             }
+        }
+
+        private void compare_Button_Click(object sender, RoutedEventArgs e)
+        {
+            List<String> compareList = new List<String>();
+            var record = client.Query<CompareClass>("SELECT Name, Inspector__c From Inspection__c WHERE Queue__c='Completed' AND Zip_Code__c='" + currentInspection.Zip_Code__c + "'");
+            for(int i = 0; i < record.Count; i++)
+            {
+                var records2 = client.Query<TempInspectorClass>("SELECT Name " +
+                                                                "From Contact " +
+                                                                "WHERE Id='" + record[i].Inspector__c + "'");
+                String addstring = record[i].Name + ": " + records2[0].Name;
+                compareList.Add(addstring);
+            }
+            compareList.Sort((x, y) => x.Substring(0, 6).CompareTo(y.Substring(0, 6)));
+            compareList.Reverse();
+            compare_list.ItemsSource = compareList;
+            Results_Page.Visibility = Visibility.Collapsed;
+            Compare_page.Visibility = Visibility.Visible;
+        }
+
+        private void return_compare_Click(object sender, RoutedEventArgs e)
+        {
+            Compare_page.Visibility = Visibility.Collapsed;
+            orderNumberSearch = currentInspection.Name;
+            SearchResults();
         }
     }//nothing goes below here
 }
