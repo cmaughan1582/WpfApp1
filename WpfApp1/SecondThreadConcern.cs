@@ -25,6 +25,8 @@ namespace WpfApp1
                     "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c " +
                     "From Account " +
                     "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
+                records.Add(client.FindById<NewInspectorClass>("Account", "0013700000W5oq8"));
+                records.Add(client.FindById<NewInspectorClass>("Account", "00137000009jaml"));
             }
             else
             {
@@ -140,7 +142,7 @@ namespace WpfApp1
                         }
                         OfficialInspectorList.Add(addObject);
                     }
-                    catch (System.FormatException e)
+                    catch (Exception e)
                     {
                         missedSeconds.Add(i);
                     }
