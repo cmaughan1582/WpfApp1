@@ -445,7 +445,7 @@ namespace WpfApp1
             }
             else
             {
-                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c + ", " + currentInspection.Zip_Code__c);
                 JsonReturn = ("");
                 using (var client1 = new HttpClient())
                 {
@@ -466,7 +466,8 @@ namespace WpfApp1
                 }
                 else
                 {
-                    currentInspectionAddress = (currentInspection.Zip_Code__c);
+
+                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
                     JsonReturn = ("");
                     using (var client1 = new HttpClient())
                     {
@@ -481,6 +482,28 @@ namespace WpfApp1
                     coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
                     array = coordinates.results.ToArray();
                     array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+                        currentInspectionAddress = (currentInspection.Zip_Code__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + currentInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                    }
                 }
             }
             double currentInspectionLatitude = array2[0].displayLatLng.lat;
