@@ -546,7 +546,7 @@ namespace WpfApp1
         {
             List<String> queue = new List<String>();
             List<InspectionListItem> worker = new List<InspectionListItem>();
-            var iassign = client.Query<InspectionListItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign'");
+            var iassign = client.Query<InspectionListItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
             for (int i = 0; i < iassign.Count; i++)
             {
                 if (iassign[i].ADHOC__c == null)
