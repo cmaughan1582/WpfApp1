@@ -21,7 +21,7 @@ namespace WpfApp1
         public Double? latitude { get; set; }
         public Double? longitute { get; set; }
         public String contactID { get; set; }
-        public Object assignedInspections { get; set; }
+        public int? assignedInspections { get; set; }
         public double currentDistance { get; set; }
         public String Phone { get; set; }
         public Dictionary<String, double?> feeDictionary { get; set; }

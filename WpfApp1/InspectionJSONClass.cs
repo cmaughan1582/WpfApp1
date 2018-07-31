@@ -204,5 +204,6 @@ namespace WpfApp1
             public object PNA_Repairs__c { get; set; }
             public String Property_Longitude__c { get; set; }
             public String Property_Latitude__c { get; set; }
+            public bool Auto_Assign_Skip__c { get; set; }
     }
 }

@@ -1231,12 +1231,134 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
         //This is the autoassign function, the button is on the search page but it isn't really related to searching so I will just leave it here
         private void Auto_assign_Click(object sender, RoutedEventArgs e)
         {
+
+            string inspectorAssign = "";
+            List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
+            List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
             SortNumber = 0;
-            List<String> autoqueue = sortAssignQueue();
+            //List<String> autoqueue = sortAssignQueue();
+            List<String> autoqueue = new List<string>();
+            autoqueue.Add()
             for(int i = 0; i < autoqueue.Capacity; i++)
             {
-                currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
-                sortByDistance(client);
+                if (currentInspection.Auto_Assign_Skip__c == false)
+                {
+                    List<string> historyList = new List<string>();
+                    inspectorAssign = "";
+                    currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
+                    sortByDistance(client);
+                    for (int j = 0; j < workingList.Capacity; j++)
+                    {
+                        if (workingList[j].currentDistance <= workingList[j].Coverage_Area_Radius__c && workingList[j].assignedInspections < workingList[j].Max_Insp_Count__c)
+                        {
+                            tempList.Add(workingList[j]);
+                        }
+                    }
+                    var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND Field='Rep_ID_Inspector_history_tracking__c'");
+                    for (int j = 0; j < history.Count; j++)
+                    {
+                        if (history[i].NewValue.Equals("-") && history[i].OldValue != null)
+                        {
+                            historyList.Add(history[i].OldValue);
+                        }
+                    }
+                    for (int j = 0; j < tempList.Capacity; j++)
+                    {
+                        if (!historyList.Contains(tempList[j].contactID) && tempList[j].Status__c != "On Hold") 
+                        {
+                            templist2.Add(tempList[j]);
+                        }
+                    }
+                    tempList = templist2;
+                    if (tempList.Capacity > 0)
+                    {
+                        for (int j = 0; j < tempList.Capacity; j++)
+                        {
+                            if (tempList[j].Status__c == "Top Rep")
+                            {
+                                templist2.Add(tempList[j]);
+                            }
+                        }
+                        if (templist2.Capacity == 0)
+                        {
+                            tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
+                            if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                            {
+                                if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                {
+                                    inspectorAssign = tempList[0].contactID;
+                                }
+                                else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                {
+                                    inspectorAssign = tempList[1].contactID;
+                                }
+                                else
+                                {
+                                    if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                    {
+                                        inspectorAssign = tempList[0].contactID;
+                                    }
+                                    else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                    {
+                                        inspectorAssign = tempList[1].contactID;
+                                    }
+                                    else
+                                    {
+                                        inspectorAssign = tempList[0].contactID;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                inspectorAssign = tempList[0].contactID;
+                            }
+                        }
+                        else if (templist2.Capacity == 1)
+                        {
+                            inspectorAssign = templist2[0].contactID;
+                        }
+                        else
+                        {
+                            tempList = templist2;
+                            tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
+                            if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                            {
+                                if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                {
+                                    inspectorAssign = tempList[0].contactID;
+                                }
+                                else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                {
+                                    inspectorAssign = tempList[1].contactID;
+                                }
+                                else
+                                {
+                                    if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                    {
+                                        inspectorAssign = tempList[0].contactID;
+                                    }
+                                    else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                    {
+                                        inspectorAssign = tempList[1].contactID;
+                                    }
+                                    else
+                                    {
+                                        inspectorAssign = tempList[0].contactID;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                inspectorAssign = tempList[0].contactID;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
+                        Console.WriteLine("Skip");
+                    }
+                }
             }
         }
     }//nothing goes below here
