@@ -5,7 +5,7 @@ using System.Text;
 namespace WpfApp1
 {
     [Serializable]
-    class OfficialInspectorClass
+    public class OfficialInspectorClass
     {
         public String accountId { get; set; }
         public String Name { get; set; }
@@ -21,11 +21,11 @@ namespace WpfApp1
         public Double? latitude { get; set; }
         public Double? longitute { get; set; }
         public String contactID { get; set; }
-        public int? assignedInspections { get; set; }
+        public double? assignedInspections { get; set; }
         public double currentDistance { get; set; }
         public String Phone { get; set; }
         public Dictionary<String, double?> feeDictionary { get; set; }
-        public int Max_Insp_Count__c { get; set; }
-        public int Coverage_Area_Radius__c { get; set; }
+        public double? Max_Insp_Count__c { get; set; }
+        public String Coverage_Area_Radius__c { get; set; }
     }
 }

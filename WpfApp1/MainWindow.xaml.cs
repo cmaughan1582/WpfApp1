@@ -71,9 +71,6 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
             }
             login_page.Visibility = Visibility.Visible;
-            Window win2 = new WebWindow();
-            win2.Show();
-
         }
 
         //LOGIN PAGE FUNCTIONS
@@ -1238,18 +1235,18 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             SortNumber = 0;
             //List<String> autoqueue = sortAssignQueue();
             List<String> autoqueue = new List<string>();
-            autoqueue.Add()
-            for(int i = 0; i < autoqueue.Capacity; i++)
+            autoqueue.Add("151256");
+            for(int i = 0; i < autoqueue.Count; i++)
             {
                 if (currentInspection.Auto_Assign_Skip__c == false)
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
-                    currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
+                    currentInspection = findInspectionbyOrderNumber(autoqueue[i], client);
                     sortByDistance(client);
-                    for (int j = 0; j < workingList.Capacity; j++)
+                    for (int j = 0; j < workingList.Count; j++)
                     {
-                        if (workingList[j].currentDistance <= workingList[j].Coverage_Area_Radius__c && workingList[j].assignedInspections < workingList[j].Max_Insp_Count__c)
+                        if (workingList[j].currentDistance <= Convert.ToInt32(workingList[j].Coverage_Area_Radius__c) && workingList[j].assignedInspections < workingList[j].Max_Insp_Count__c)
                         {
                             tempList.Add(workingList[j]);
                         }
@@ -1262,7 +1259,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                             historyList.Add(history[i].OldValue);
                         }
                     }
-                    for (int j = 0; j < tempList.Capacity; j++)
+                    for (int j = 0; j < tempList.Count; j++)
                     {
                         if (!historyList.Contains(tempList[j].contactID) && tempList[j].Status__c != "On Hold") 
                         {
@@ -1270,16 +1267,16 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                         }
                     }
                     tempList = templist2;
-                    if (tempList.Capacity > 0)
+                    if (tempList.Count > 0)
                     {
-                        for (int j = 0; j < tempList.Capacity; j++)
+                        for (int j = 0; j < tempList.Count; j++)
                         {
                             if (tempList[j].Status__c == "Top Rep")
                             {
                                 templist2.Add(tempList[j]);
                             }
                         }
-                        if (templist2.Capacity == 0)
+                        if (templist2.Count == 0)
                         {
                             tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
                             if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
@@ -1313,7 +1310,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                                 inspectorAssign = tempList[0].contactID;
                             }
                         }
-                        else if (templist2.Capacity == 1)
+                        else if (templist2.Count == 1)
                         {
                             inspectorAssign = templist2[0].contactID;
                         }
@@ -1352,6 +1349,9 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                                 inspectorAssign = tempList[0].contactID;
                             }
                         }
+                        UpdateInspectorClass updateInspector = new UpdateInspectorClass();
+                        updateInspector.Inspector__c = inspectorAssign;
+                        client.Update("Inspection__c", currentInspection.Id, updateInspector);
                     }
                     else
                     {
@@ -1360,6 +1360,240 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     }
                 }
             }
+        }
+
+        private void Maptest_Click(object sender, RoutedEventArgs e)
+        {
+            List<InspectionMapItem> assignqueue = new List<InspectionMapItem>();
+            var iassign = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
+            for(int i = 0; i < iassign.Count; i++)
+            {
+                if(iassign[i].Property_Latitude__c == null)
+                {
+                    InspectionJSONClass coordinatesInspection = findInspectionbyOrderNumber(iassign[i].Name, client);
+                    String coordinatesInspectionAddress;
+                    LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                    String JsonReturn = "";
+                    if (!coordinatesInspection.Street_Address__c.Contains(","))
+                    {
+                        String modifiedstreet = coordinatesInspection.Street_Address__c.Replace('&', '-');
+                        coordinatesInspectionAddress = (modifiedstreet + ", " + coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + coordinatesInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    var array = coordinates.results.ToArray();
+                    var array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c + ", " + coordinatesInspection.Zip_Code__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + coordinatesInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                            coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + coordinatesInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                            if (array2.Length == 1)
+                            {
+
+                            }
+                            else
+                            {
+                                coordinatesInspectionAddress = (coordinatesInspection.Zip_Code__c);
+                                JsonReturn = ("");
+                                using (var client1 = new HttpClient())
+                                {
+                                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                        + mapKey + "&location=" + coordinatesInspectionAddress);
+                                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                    request.Headers.Add("X-PrettyPrint", "1");
+                                    var response = client1.SendAsync(request).Result;
+                                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                                }
+                                coordinates = new LatLngClass.RootObject();
+                                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                                array = coordinates.results.ToArray();
+                                array2 = array[0].locations.ToArray();
+                            }
+                        }
+                    }
+                    double coordinatesInspectionLatitude = array2[0].displayLatLng.lat;
+                    double coordinatesInspectionLongitute = array2[0].displayLatLng.lng;
+                    string savelat = coordinatesInspectionLatitude.ToString();
+                    string savelon = coordinatesInspectionLongitute.ToString();
+                    SaveCoordinatesClass savecoor = new SaveCoordinatesClass();
+                    savecoor.Property_Latitude__c = savelat;
+                    savecoor.Property_Longitude__c = savelon;
+                    iassign[i].Property_Longitude__c = savelon;
+                    iassign[i].Property_Latitude__c = savelat;
+                    client.Update("Inspection__c", coordinatesInspection.Id, savecoor);
+                }
+                assignqueue.Add(iassign[i]);
+            }
+            List<InspectionMapItem> withqueue = new List<InspectionMapItem>();
+            var iwith = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='With Inspector' AND On_Hold__c!='Yes'");
+            for (int i = 0; i < iwith.Count; i++)
+            {
+                if (iwith[i].Property_Latitude__c == null)
+                {
+                    InspectionJSONClass coordinatesInspection = findInspectionbyOrderNumber(iwith[i].Name, client);
+                    String coordinatesInspectionAddress;
+                    LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                    String JsonReturn = "";
+                    if(coordinatesInspection.Street_Address__c == null)
+                    {
+                        coordinatesInspection.Street_Address__c = "";
+                    }
+                    if (!coordinatesInspection.Street_Address__c.Contains(","))
+                    {
+                        String modifiedstreet = coordinatesInspection.Street_Address__c.Replace('&', '-');
+                        coordinatesInspectionAddress = (modifiedstreet + ", " + coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + coordinatesInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    var array = coordinates.results.ToArray();
+                    var array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c + ", " + coordinatesInspection.Zip_Code__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + coordinatesInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                            coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + coordinatesInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                            if (array2.Length == 1)
+                            {
+
+                            }
+                            else
+                            {
+                                coordinatesInspectionAddress = (coordinatesInspection.Zip_Code__c);
+                                JsonReturn = ("");
+                                using (var client1 = new HttpClient())
+                                {
+                                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                        + mapKey + "&location=" + coordinatesInspectionAddress);
+                                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                    request.Headers.Add("X-PrettyPrint", "1");
+                                    var response = client1.SendAsync(request).Result;
+                                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                                }
+                                coordinates = new LatLngClass.RootObject();
+                                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                                array = coordinates.results.ToArray();
+                                array2 = array[0].locations.ToArray();
+                            }
+                        }
+                    }
+                    double coordinatesInspectionLatitude = array2[0].displayLatLng.lat;
+                    double coordinatesInspectionLongitute = array2[0].displayLatLng.lng;
+                    string savelat = coordinatesInspectionLatitude.ToString();
+                    string savelon = coordinatesInspectionLongitute.ToString();
+                    SaveCoordinatesClass savecoor = new SaveCoordinatesClass();
+                    savecoor.Property_Latitude__c = savelat;
+                    savecoor.Property_Longitude__c = savelon;
+                    iwith[i].Property_Longitude__c = savelon;
+                    iwith[i].Property_Latitude__c = savelat;
+                    client.Update("Inspection__c", coordinatesInspection.Id, savecoor);
+                }
+                withqueue.Add(iwith[i]);
+            }
+            Window win2 = new WebWindow(workingList, assignqueue, withqueue);
+            win2.Show();
         }
     }//nothing goes below here
 }
