@@ -25,5 +25,7 @@ namespace WpfApp1
         public double currentDistance { get; set; }
         public String Phone { get; set; }
         public Dictionary<String, double?> feeDictionary { get; set; }
+        public int Max_Insp_Count__c { get; set; }
+        public int Coverage_Area_Radius__c { get; set; }
     }
 }

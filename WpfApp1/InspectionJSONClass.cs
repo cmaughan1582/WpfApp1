@@ -202,5 +202,7 @@ namespace WpfApp1
             public double Gross_Margin__c { get; set; }
             public object Property_Rating__c { get; set; }
             public object PNA_Repairs__c { get; set; }
+            public String Property_Longitude__c { get; set; }
+            public String Property_Latitude__c { get; set; }
     }
 }

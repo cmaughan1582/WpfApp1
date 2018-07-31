@@ -34,7 +34,7 @@
         </Canvas>
 
         <!--Search Page-->
-        <Canvas Name="Search_Page" Visibility="Collapsed">
+        <Canvas Name="Search_Page" Visibility="Visible" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
             <TextBlock Name="Database_Loaded" Visibility="Visible" HorizontalAlignment="Center" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="The database has been loaded!" VerticalAlignment="Top" FontSize="36" TextAlignment="Center" Canvas.Top="49"/>
             <TextBlock Name="ReSearch_Text" Visibility="Collapsed" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="That Inspection Wasn't Found" Canvas.Top="38" TextAlignment="Center" FontSize="36"/>
             <TextBlock Name="Search_Prompt" Visibility="Visible" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="Enter an Inspection # to search" Canvas.Top="111" FontSize="24" TextAlignment="Center"/>
@@ -44,6 +44,7 @@
             <Grid Name="First_Search_Button" Visibility="Visible" Canvas.Top="196" Width="{Binding ActualWidth, ElementName=Canvas1}">
                 <Button  Content="Search" Canvas.Left="363" Canvas.Top="244" Width="74" Click="First_Search_Button_Click" HorizontalAlignment="Center"/>
             </Grid>
+            <Button Name="Auto_assign" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
         </Canvas>
 
         <!--Results Page-->

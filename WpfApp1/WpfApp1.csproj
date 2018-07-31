@@ -144,12 +144,16 @@
     <Compile Include="InspectorFeesClass.cs" />
     <Compile Include="NewFeeClass.cs" />
     <Compile Include="QueryforIDclass.cs" />
+    <Compile Include="SaveCoordinatesClass.cs" />
     <Compile Include="SecondThreadConcern.cs" />
     <Compile Include="TempInspectorClass.cs" />
     <Compile Include="UpdateAdhocClass.cs" />
     <Compile Include="UpdateInspectorClass.cs" />
     <Compile Include="UpdateCoordinatesClass.cs" />
     <Compile Include="UpdateDateClass.cs" />
+    <Compile Include="WebWindow.xaml.cs">
+      <DependentUpon>WebWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -164,6 +168,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="WebWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NewInspectorClass.cs" />

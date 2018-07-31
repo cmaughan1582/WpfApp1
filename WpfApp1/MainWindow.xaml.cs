@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
+
 namespace WpfApp1
 {
 
@@ -48,6 +50,19 @@ namespace WpfApp1
 
         public MainWindow()
         {
+            /*var pricipal = new System.Security.Principal.WindowsPrincipal(
+System.Security.Principal.WindowsIdentity.GetCurrent());
+            if (pricipal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
+            {
+                RegistryKey registrybrowser = Registry.LocalMachine.OpenSubKey
+                    (@"Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION", true);
+                string myProgramName = System.IO.Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var currentValue = registrybrowser.GetValue(myProgramName);
+                if (currentValue == null || (int)currentValue != 0x00002af9)
+                    registrybrowser.SetValue(myProgramName, 0x00002af9, RegistryValueKind.DWord);
+            }
+            else
+                this.Title += " ( Первый раз запускать с правами админа )";*/
             InitializeComponent();
             //all of this stuff is hopefully going to be used in the future to create a re-enter credentials screen for
             //when the password is changed.
@@ -56,6 +71,8 @@ namespace WpfApp1
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
             }
             login_page.Visibility = Visibility.Visible;
+            Window win2 = new WebWindow();
+            win2.Show();
 
         }
 
@@ -412,40 +429,22 @@ namespace WpfApp1
         //this function sorts the working list by distance to the current inspection...used during search results function
         private void sortByDistance(SalesforceClient client)
         {
-            String currentInspectionAddress;
-            String JsonReturn = ("");
-            LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
-            //var array;
-            if (!currentInspection.Street_Address__c.Contains(","))
+            GeoCoordinate currentGeopoint;
+            if (currentInspection.Property_Latitude__c == null)
             {
-                String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
-                currentInspectionAddress = (modifiedstreet + ", " + currentInspection.City__c + ", " + currentInspection.State__c);
-            }
-            else
-            {
-                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
-            }
-            JsonReturn = ("");
-            using (var client1 = new HttpClient())
-            {
-                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
-                    + mapKey + "&location=" + currentInspectionAddress);
-                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
-                request.Headers.Add("X-PrettyPrint", "1");
-                var response = client1.SendAsync(request).Result;
-                JsonReturn = response.Content.ReadAsStringAsync().Result;
-            }
-            coordinates = new LatLngClass.RootObject();
-            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
-            var array = coordinates.results.ToArray();
-            var array2 = array[0].locations.ToArray();
-            if (array2.Length == 1)
-            {
-
-            }
-            else
-            {
-                currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c + ", " + currentInspection.Zip_Code__c);
+                String currentInspectionAddress;
+                String JsonReturn = ("");
+                LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                //var array;
+                if (!currentInspection.Street_Address__c.Contains(","))
+                {
+                    String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
+                    currentInspectionAddress = (modifiedstreet + ", " + currentInspection.City__c + ", " + currentInspection.State__c);
+                }
+                else
+                {
+                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                }
                 JsonReturn = ("");
                 using (var client1 = new HttpClient())
                 {
@@ -458,16 +457,15 @@ namespace WpfApp1
                 }
                 coordinates = new LatLngClass.RootObject();
                 coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
-                array = coordinates.results.ToArray();
-                array2 = array[0].locations.ToArray();
+                var array = coordinates.results.ToArray();
+                var array2 = array[0].locations.ToArray();
                 if (array2.Length == 1)
                 {
 
                 }
                 else
                 {
-
-                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c + ", " + currentInspection.Zip_Code__c);
                     JsonReturn = ("");
                     using (var client1 = new HttpClient())
                     {
@@ -488,7 +486,8 @@ namespace WpfApp1
                     }
                     else
                     {
-                        currentInspectionAddress = (currentInspection.Zip_Code__c);
+
+                        currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
                         JsonReturn = ("");
                         using (var client1 = new HttpClient())
                         {
@@ -503,12 +502,46 @@ namespace WpfApp1
                         coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
                         array = coordinates.results.ToArray();
                         array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+                            currentInspectionAddress = (currentInspection.Zip_Code__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + currentInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                        }
                     }
                 }
+                double currentInspectionLatitude = array2[0].displayLatLng.lat;
+                double currentInspectionLongitute = array2[0].displayLatLng.lng;
+                string savelat = currentInspectionLatitude.ToString();
+                string savelon = currentInspectionLongitute.ToString();
+                currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
+                SaveCoordinatesClass updateCoordinates = new SaveCoordinatesClass();
+                updateCoordinates.Property_Latitude__c = savelat;
+                updateCoordinates.Property_Longitude__c = savelon;
+                client.Update("Inspection__c", currentInspection.Id, updateCoordinates);
             }
-            double currentInspectionLatitude = array2[0].displayLatLng.lat;
-            double currentInspectionLongitute = array2[0].displayLatLng.lng;
-            GeoCoordinate currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
+            else
+            {
+                double currentInspectionLatitude = Convert.ToDouble(currentInspection.Property_Latitude__c);
+                double currentInspectionLongitute = Convert.ToDouble(currentInspection.Property_Longitude__c);
+                currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
+            }
             for (int i = 0; i < workingList.Count; i++)
             {
                 GeoCoordinate compareVal = new GeoCoordinate(workingList[i].latitude.GetValueOrDefault(), workingList[i].longitute.GetValueOrDefault());
@@ -1194,6 +1227,17 @@ namespace WpfApp1
             Compare_page.Visibility = Visibility.Collapsed;
             orderNumberSearch = currentInspection.Name;
             SearchResults();
+        }
+        //This is the autoassign function, the button is on the search page but it isn't really related to searching so I will just leave it here
+        private void Auto_assign_Click(object sender, RoutedEventArgs e)
+        {
+            SortNumber = 0;
+            List<String> autoqueue = sortAssignQueue();
+            for(int i = 0; i < autoqueue.Capacity; i++)
+            {
+                currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
+                sortByDistance(client);
+            }
         }
     }//nothing goes below here
 }
