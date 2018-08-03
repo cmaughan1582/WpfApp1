@@ -556,7 +556,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 newtenString = (workingList[i].Rep_ID__c + " " + workingList[i].Name + ":      " + Math.Round(workingList[i].currentDistance, 2) + " Miles" + "      Freddie: " + fmacString + "\n"
                     + "Grade: " + workingList[i].Inspector_Ranking__c + "      Assigned Inspections: " + workingList[i].assignedInspections + "      FNMA: " + fnmaString + "\n"
                     + "Status: " + workingList[i].Status__c + "      Fee: $" + workingList[i].feeDictionary[currentInspection.Fee_Type__c]
-                    + "\nPhone: " + workingList[i].Phone
+                    + "\nPhone: " + workingList[i].Phone + "      Cap: " + workingList[i].Max_Insp_Count__c + " Inspections"
                     + "\nComments: " + workingList[i].Comments__c + "\n");
             }
             else
@@ -1228,21 +1228,26 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
         //This is the autoassign function, the button is on the search page but it isn't really related to searching so I will just leave it here
         private void Auto_assign_Click(object sender, RoutedEventArgs e)
         {
-
+            List<String> assignedarray = new List<String>();
+            List<String> skippedarray = new List<String>();
             string inspectorAssign = "";
             List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
             List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
             SortNumber = 0;
-            //List<String> autoqueue = sortAssignQueue();
-            List<String> autoqueue = new List<string>();
-            autoqueue.Add("151256");
+            List<String> autoqueue = sortAssignQueue();
+            //List<String> autoqueue = new List<string>();
+            //autoqueue.Add("163518");
             for(int i = 0; i < autoqueue.Count; i++)
             {
+                tempList = new List<OfficialInspectorClass>();
+                templist2 = new List<OfficialInspectorClass>();
+                String searchnumber = autoqueue[i].Substring(0, 6);
+                currentInspection = findInspectionbyOrderNumber(searchnumber, client);
                 if (currentInspection.Auto_Assign_Skip__c == false)
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
-                    currentInspection = findInspectionbyOrderNumber(autoqueue[i], client);
+                    
                     sortByDistance(client);
                     for (int j = 0; j < workingList.Count; j++)
                     {
@@ -1251,115 +1256,144 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                             tempList.Add(workingList[j]);
                         }
                     }
+                    //Console.WriteLine(tempList.Count);
+                    //Console.ReadLine();
                     var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND Field='Rep_ID_Inspector_history_tracking__c'");
                     for (int j = 0; j < history.Count; j++)
                     {
-                        if (history[i].NewValue.Equals("-") && history[i].OldValue != null)
+                        if (history[j].NewValue.Equals("-") && history[j].OldValue != null)
                         {
-                            historyList.Add(history[i].OldValue);
+                            historyList.Add(history[j].OldValue);
                         }
                     }
                     for (int j = 0; j < tempList.Count; j++)
                     {
-                        if (!historyList.Contains(tempList[j].contactID) && tempList[j].Status__c != "On Hold") 
+                        String compareString = tempList[j].Rep_ID__c + " - " + tempList[j].Name;
+                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold") 
                         {
                             templist2.Add(tempList[j]);
                         }
                     }
                     tempList = templist2;
+                    templist2 = new List<OfficialInspectorClass>();
                     if (tempList.Count > 0)
                     {
-                        for (int j = 0; j < tempList.Count; j++)
+                        if (tempList.Count > 1)
                         {
-                            if (tempList[j].Status__c == "Top Rep")
+                            for (int j = 0; j < tempList.Count; j++)
                             {
-                                templist2.Add(tempList[j]);
+                                if (tempList[j].Status__c == "Top Rep")
+                                {
+                                    templist2.Add(tempList[j]);
+                                }
                             }
-                        }
-                        if (templist2.Count == 0)
-                        {
-                            tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
-                            if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                            if (templist2.Count == 0)
                             {
-                                if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                tempList.Sort((x, y) => y.Inspector_Ranking__c.CompareTo(x.Inspector_Ranking__c));
+                                if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
                                 {
-                                    inspectorAssign = tempList[0].contactID;
-                                }
-                                else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                {
-                                    inspectorAssign = tempList[1].contactID;
-                                }
-                                else
-                                {
-                                    if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                    if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                     {
-                                        inspectorAssign = tempList[0].contactID;
+                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign = tempList[0].Name;
                                     }
-                                    else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                    else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                     {
-                                        inspectorAssign = tempList[1].contactID;
+                                        //inspectorAssign = tempList[1].contactID;
+                                        inspectorAssign = tempList[1].Name;
                                     }
                                     else
                                     {
-                                        inspectorAssign = tempList[0].contactID;
+                                        if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                        }
+                                        else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign = tempList[1].Name;
+                                        }
+                                        else
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    //inspectorAssign = tempList[0].contactID;
+                                    inspectorAssign = tempList[0].Name;
+                                }
+                            }
+                            else if (templist2.Count == 1)
+                            {
+                                //inspectorAssign = templist2[0].contactID;
+                                inspectorAssign = templist2[0].Name;
                             }
                             else
                             {
-                                inspectorAssign = tempList[0].contactID;
+                                tempList = templist2;
+                                tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
+                                if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                                {
+                                    if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                    {
+                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign = tempList[0].Name;
+                                    }
+                                    else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                    {
+                                        //inspectorAssign = tempList[1].contactID;
+                                        inspectorAssign = tempList[1].Name;
+                                    }
+                                    else
+                                    {
+                                        if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                        }
+                                        else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign = tempList[1].Name;
+                                        }
+                                        else
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //inspectorAssign = tempList[0].contactID;
+                                    inspectorAssign = tempList[0].Name;
+                                }
                             }
-                        }
-                        else if (templist2.Count == 1)
-                        {
-                            inspectorAssign = templist2[0].contactID;
                         }
                         else
                         {
-                            tempList = templist2;
-                            tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
-                            if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
-                            {
-                                if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                {
-                                    inspectorAssign = tempList[0].contactID;
-                                }
-                                else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                {
-                                    inspectorAssign = tempList[1].contactID;
-                                }
-                                else
-                                {
-                                    if (tempList[0].currentDistance < tempList[1].currentDistance)
-                                    {
-                                        inspectorAssign = tempList[0].contactID;
-                                    }
-                                    else if (tempList[0].currentDistance > tempList[1].currentDistance)
-                                    {
-                                        inspectorAssign = tempList[1].contactID;
-                                    }
-                                    else
-                                    {
-                                        inspectorAssign = tempList[0].contactID;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                inspectorAssign = tempList[0].contactID;
-                            }
+                            //inspectorAssign = tempList[0].contactID;
+                            inspectorAssign = tempList[0].Name;
                         }
                         UpdateInspectorClass updateInspector = new UpdateInspectorClass();
                         updateInspector.Inspector__c = inspectorAssign;
-                        client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                        assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
+                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
                     }
                     else
                     {
-                        currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
+                        skippedarray.Add((currentInspection.Name + ": Skipped"));
+                        //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
                         Console.WriteLine("Skip");
                     }
                 }
             }
+            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Assigned.txt", assignedarray);
+            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Skipped.txt", skippedarray);
         }
 
         private void Maptest_Click(object sender, RoutedEventArgs e)
@@ -1477,7 +1511,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 assignqueue.Add(iassign[i]);
             }
             List<InspectionMapItem> withqueue = new List<InspectionMapItem>();
-            var iwith = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='With Inspector' AND On_Hold__c!='Yes'");
+            var iwith = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='With Inspector' AND On_Hold__c!='Yes'");
             for (int i = 0; i < iwith.Count; i++)
             {
                 if (iwith[i].Property_Latitude__c == null)
@@ -1592,8 +1626,265 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 }
                 withqueue.Add(iwith[i]);
             }
-            Window win2 = new WebWindow(workingList, assignqueue, withqueue);
+            List<InspectionMapItem> validationqueue = new List<InspectionMapItem>();
+            var ival = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Validation' AND On_Hold__c!='Yes' AND of_Days_in_Current_Queue__c >= 0");
+            for (int i = 0; i < ival.Count; i++)
+            {
+                if (ival[i].Property_Latitude__c == null)
+                {
+                    InspectionJSONClass coordinatesInspection = findInspectionbyOrderNumber(ival[i].Name, client);
+                    String coordinatesInspectionAddress;
+                    LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                    String JsonReturn = "";
+                    if (coordinatesInspection.Street_Address__c == null)
+                    {
+                        coordinatesInspection.Street_Address__c = "";
+                    }
+                    if (!coordinatesInspection.Street_Address__c.Contains(","))
+                    {
+                        String modifiedstreet = coordinatesInspection.Street_Address__c.Replace('&', '-');
+                        coordinatesInspectionAddress = (modifiedstreet + ", " + coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + coordinatesInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    var array = coordinates.results.ToArray();
+                    var array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c + ", " + coordinatesInspection.Zip_Code__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + coordinatesInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                            coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + coordinatesInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                            if (array2.Length == 1)
+                            {
+
+                            }
+                            else
+                            {
+                                coordinatesInspectionAddress = (coordinatesInspection.Zip_Code__c);
+                                JsonReturn = ("");
+                                using (var client1 = new HttpClient())
+                                {
+                                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                        + mapKey + "&location=" + coordinatesInspectionAddress);
+                                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                    request.Headers.Add("X-PrettyPrint", "1");
+                                    var response = client1.SendAsync(request).Result;
+                                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                                }
+                                coordinates = new LatLngClass.RootObject();
+                                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                                array = coordinates.results.ToArray();
+                                array2 = array[0].locations.ToArray();
+                            }
+                        }
+                    }
+                    double coordinatesInspectionLatitude = array2[0].displayLatLng.lat;
+                    double coordinatesInspectionLongitute = array2[0].displayLatLng.lng;
+                    string savelat = coordinatesInspectionLatitude.ToString();
+                    string savelon = coordinatesInspectionLongitute.ToString();
+                    SaveCoordinatesClass savecoor = new SaveCoordinatesClass();
+                    savecoor.Property_Latitude__c = savelat;
+                    savecoor.Property_Longitude__c = savelon;
+                    ival[i].Property_Longitude__c = savelon;
+                    ival[i].Property_Latitude__c = savelat;
+                    client.Update("Inspection__c", coordinatesInspection.Id, savecoor);
+                }
+                validationqueue.Add(ival[i]);
+            }
+            List<InspectionMapItem> acceptqueue = new List<InspectionMapItem>();
+            var iaccept = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='Accept' AND On_Hold__c!='Yes'");
+            for (int i = 0; i < iaccept.Count; i++)
+            {
+                if (iaccept[i].Property_Latitude__c == null)
+                {
+                    InspectionJSONClass coordinatesInspection = findInspectionbyOrderNumber(iaccept[i].Name, client);
+                    String coordinatesInspectionAddress;
+                    LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                    String JsonReturn = "";
+                    if (coordinatesInspection.Street_Address__c == null)
+                    {
+                        coordinatesInspection.Street_Address__c = "";
+                    }
+                    if (!coordinatesInspection.Street_Address__c.Contains(","))
+                    {
+                        String modifiedstreet = coordinatesInspection.Street_Address__c.Replace('&', '-');
+                        coordinatesInspectionAddress = (modifiedstreet + ", " + coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                    }
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + coordinatesInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    var array = coordinates.results.ToArray();
+                    var array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+                        coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c + ", " + coordinatesInspection.Zip_Code__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + coordinatesInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                            coordinatesInspectionAddress = (coordinatesInspection.City__c + ", " + coordinatesInspection.State__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + coordinatesInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                            if (array2.Length == 1)
+                            {
+
+                            }
+                            else
+                            {
+                                coordinatesInspectionAddress = (coordinatesInspection.Zip_Code__c);
+                                JsonReturn = ("");
+                                using (var client1 = new HttpClient())
+                                {
+                                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                        + mapKey + "&location=" + coordinatesInspectionAddress);
+                                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                    request.Headers.Add("X-PrettyPrint", "1");
+                                    var response = client1.SendAsync(request).Result;
+                                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                                }
+                                coordinates = new LatLngClass.RootObject();
+                                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                                array = coordinates.results.ToArray();
+                                array2 = array[0].locations.ToArray();
+                            }
+                        }
+                    }
+                    double coordinatesInspectionLatitude = array2[0].displayLatLng.lat;
+                    double coordinatesInspectionLongitute = array2[0].displayLatLng.lng;
+                    string savelat = coordinatesInspectionLatitude.ToString();
+                    string savelon = coordinatesInspectionLongitute.ToString();
+                    SaveCoordinatesClass savecoor = new SaveCoordinatesClass();
+                    savecoor.Property_Latitude__c = savelat;
+                    savecoor.Property_Longitude__c = savelon;
+                    iaccept[i].Property_Longitude__c = savelon;
+                    iaccept[i].Property_Latitude__c = savelat;
+                    client.Update("Inspection__c", coordinatesInspection.Id, savecoor);
+                }
+                acceptqueue.Add(iaccept[i]);
+            }
+            Window win2 = new WebWindow(workingList, assignqueue, withqueue, validationqueue, acceptqueue);
             win2.Show();
+        }
+
+        private void Change_coordinates_Click(object sender, RoutedEventArgs e)
+        {
+            Results_Page.Visibility = Visibility.Collapsed;
+            
+            Change_coor_page.Visibility = Visibility.Visible;
+        }
+
+        private void Cancel_coor_Click(object sender, RoutedEventArgs e)
+        {
+            Change_coor_page.Visibility = Visibility.Collapsed;
+            orderNumberSearch = currentInspection.Name;
+            SearchResults();
+        }
+
+        private void Save_coor_button_Click(object sender, RoutedEventArgs e)
+        {
+            SaveCoordinatesClass updatecoor = new SaveCoordinatesClass();
+            updatecoor.Property_Latitude__c = newlatBox.Text;
+            updatecoor.Property_Longitude__c = newlonBox.Text;
+            client.Update("Inspection__c", currentInspection.Id, updatecoor);
+            orderNumberSearch = currentInspection.Name;
+            Change_coor_page.Visibility = Visibility.Collapsed;
+            SearchResults();
         }
     }//nothing goes below here
 }

@@ -45,15 +45,19 @@ var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.
     var inspectorLayer = L.layerGroup();
     var assignlayer = L.layerGroup();
     var withlayer = L.layerGroup();
+    var vallayer = L.layerGroup();
+    var acceptlayer = L.layerGroup();
 	var overlaymaps = {
 		"Test": layer1,
         "Inspectors": inspectorLayer,
         "Assign": assignlayer,
-        "With Inspector": withlayer
+        "With Inspector": withlayer,
+        "Validation": vallayer,
+        "Accept": acceptlayer
 	};
-	mymap.addLayer(layer1);
-    mymap.addLayer(inspectorLayer);
-    mymap.addLayer(assignlayer);
+	//mymap.addLayer(layer1);
+    //mymap.addLayer(inspectorLayer);
+    //mymap.addLayer(assignlayer);
     //mymap.addLayer(withlayer);
 	L.control.layers(null, overlaymaps).addTo(mymap);
 	//centerMap(25.520581, -103.40607);
@@ -94,6 +98,24 @@ var Wikimedia = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.
             popupAnchor: [0, -30],
         });
         var imarker = L.marker([lat, lon], { icon: withIcon }).bindPopup("<b>" + name + "</b><br />test<br/>").addTo(withlayer);
+    }
+    function mapVal(lat, lon, name) {
+        var ValIcon = L.icon({
+            iconUrl: 'images/red pin.png',
+            iconSize: [25, 40],
+            iconAnchor: [13, 39],
+            popupAnchor: [0, -30],
+        });
+        var imarker = L.marker([lat, lon], { icon: ValIcon }).bindPopup("<b>" + name + "</b><br />test<br/>").addTo(vallayer);
+    }
+    function mapAccept(lat, lon, name) {
+        var acceptIcon = L.icon({
+            iconUrl: 'images/orange pin.png',
+            iconSize: [25, 40],
+            iconAnchor: [13, 39],
+            popupAnchor: [0, -30],
+        });
+        var imarker = L.marker([lat, lon], { icon: acceptIcon }).bindPopup("<b>" + name + "</b><br />test<br/>").addTo(acceptlayer);
     }
 </script>
 

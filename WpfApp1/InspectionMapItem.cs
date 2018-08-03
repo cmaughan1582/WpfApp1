@@ -16,5 +16,6 @@ namespace WpfApp1
         public String Fee_Type__c { get; set; }
         public String Property_Longitude__c { get; set; }
         public String Property_Latitude__c { get; set; }
+        public String Rep_ID_Inspector_Formula__c {get; set;}
     }
 }

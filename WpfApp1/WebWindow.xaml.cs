@@ -22,7 +22,7 @@ namespace WpfApp1
     /// </summary>
     public partial class WebWindow : Window
     {
-        public WebWindow(List<OfficialInspectorClass> inspectors, List<InspectionMapItem> assign, List<InspectionMapItem> with)
+        public WebWindow(List<OfficialInspectorClass> inspectors, List<InspectionMapItem> assign, List<InspectionMapItem> with, List<InspectionMapItem> val, List<InspectionMapItem> accept)
         {
             InitializeComponent();
 
@@ -45,6 +45,14 @@ namespace WpfApp1
                 for(int i = 0; i < with.Count; i++)
                 {
                     Mapbrowser.InvokeScript("mapWith", new Object[] { Convert.ToDouble(with[i].Property_Latitude__c), Convert.ToDouble(with[i].Property_Longitude__c), with[i].Name });
+                }
+                for (int i = 0; i < val.Count; i++)
+                {
+                    Mapbrowser.InvokeScript("mapVal", new Object[] { Convert.ToDouble(val[i].Property_Latitude__c), Convert.ToDouble(val[i].Property_Longitude__c), val[i].Name });
+                }
+                for (int i = 0; i < accept.Count; i++)
+                {
+                    Mapbrowser.InvokeScript("mapAccept", new Object[] { Convert.ToDouble(accept[i].Property_Latitude__c), Convert.ToDouble(accept[i].Property_Longitude__c), accept[i].Name });
                 }
                 Mapbrowser.InvokeScript("centerMap", new Object[] { 41.750720, -111.840137 });
 
