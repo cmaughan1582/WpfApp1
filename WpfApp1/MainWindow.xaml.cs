@@ -1269,7 +1269,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     for (int j = 0; j < tempList.Count; j++)
                     {
                         String compareString = tempList[j].Rep_ID__c + " - " + tempList[j].Name;
-                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold") 
+                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold" && tempList[j].feeDictionary[currentInspection.Fee_Type_Text__c] != null) 
                         {
                             templist2.Add(tempList[j]);
                         }
@@ -1398,6 +1398,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
 
         private void Maptest_Click(object sender, RoutedEventArgs e)
         {
+            InspectionJSONClass mapInspection = currentInspection;
             List<InspectionMapItem> assignqueue = new List<InspectionMapItem>();
             var iassign = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
             for(int i = 0; i < iassign.Count; i++)
@@ -1858,7 +1859,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 }
                 acceptqueue.Add(iaccept[i]);
             }
-            Window win2 = new WebWindow(workingList, assignqueue, withqueue, validationqueue, acceptqueue);
+            Window win2 = new WebWindow(workingList, assignqueue, withqueue, validationqueue, acceptqueue, mapInspection);
             win2.Show();
         }
 

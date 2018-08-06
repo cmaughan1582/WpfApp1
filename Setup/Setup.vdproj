@@ -27,6 +27,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0242BB1B9F9B4A48A3FEDCF23C14F007"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_031DE6EA76B647CAB73594EE11550B34"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_043AE091F998AD6CEF48DE60584E6134"
         "OwnerKey" = "8:_8C18E61FDF1D63881150D2B86658A74D"
         "MsmSig" = "8:_UNDEFINED"
@@ -81,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_22CA1CD1A2334B95941E8C6FEAE766A1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_245C2789BF7D2CD82D42E9628241949F"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -95,6 +113,12 @@
         {
         "MsmKey" = "8:_277DEA6F814E4983770D9703BBF3CBD6"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_287E2B6031414DB3B12EC5C96EB7CFF4"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -117,6 +141,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_38177C2F274049938B8558EF73A86091"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_382203B568EC04B3FCD37CFAF9A476D2"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -129,6 +159,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_39E835FED442443F9BEC8630C8D0E427"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3A620E29104FD852227C4BC72EDBC5FD"
         "OwnerKey" = "8:_8C18E61FDF1D63881150D2B86658A74D"
         "MsmSig" = "8:_UNDEFINED"
@@ -137,6 +173,12 @@
         {
         "MsmKey" = "8:_3CF200344A5B87C2CD8B776EAE4E2A63"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_47581AD7144C4046A0146F709D263857"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -213,6 +255,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_680DDD9D8D554E898B83C2CE2D1D587A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7024C89618EF5F7AA645DEA18957700B"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -221,6 +269,12 @@
         {
         "MsmKey" = "8:_70C43A240BF49514534FD968011435FE"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7105305FF852448F880712785A84D06E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -369,6 +423,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A658F117FE2748A3A20AFC2EDBFADA19"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A7137D7BADA84C6A91D50F428D019590"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A813732DB157D9DE555D1AEF6CCFBC4C"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -435,6 +501,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BBE71AC8480A43E1834E2B8F7C843891"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BC03029B62C0D987E791B2C1FCC01E5D"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -449,6 +521,24 @@
         {
         "MsmKey" = "8:_C0722CAFAFC76C44D55881989847A5D1"
         "OwnerKey" = "8:_A63E3DA8A8BB6DBC955ACA781AEBBD5B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C18408EBD16A41498B33ED555D5CF3EA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C269BE9E41D3402295CEA3C273439835"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C49C881A2D64429A8F93780C5A6683D1"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -501,6 +591,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D444A21918FB447EB89496A24080D833"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D69FD2E525D84099BCA2385888A74134"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D9C3A06A4DC64D1689F686FFCC8CDA67"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
         "MsmSig" = "8:_UNDEFINED"
@@ -509,6 +611,12 @@
         {
         "MsmKey" = "8:_DAFDDE921B334A31FA7EEDC375249135"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E01DF349F6164D0F8219BD0EAE68BD4B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -533,6 +641,12 @@
         {
         "MsmKey" = "8:_E8B55F6C4B7E01F8E2ACB319A8DAA77C"
         "OwnerKey" = "8:_5D77DB6B8D604681BD607FEB68898453"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EB74E002D84E424A83098F89052A747B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1195,6 +1309,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0242BB1B9F9B4A48A3FEDCF23C14F007"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\purple pin.png"
+            "TargetName" = "8:purple pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_031DE6EA76B647CAB73594EE11550B34"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet.js.map"
+            "TargetName" = "8:leaflet.js.map"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_043AE091F998AD6CEF48DE60584E6134"
             {
             "AssemblyRegister" = "3:1"
@@ -1463,6 +1617,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_22CA1CD1A2334B95941E8C6FEAE766A1"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\pink pin.png"
+            "TargetName" = "8:pink pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_245C2789BF7D2CD82D42E9628241949F"
             {
             "AssemblyRegister" = "3:1"
@@ -1523,6 +1697,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_287E2B6031414DB3B12EC5C96EB7CFF4"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet-src.js.map"
+            "TargetName" = "8:leaflet-src.js.map"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2DFA0BB4FE7A4C04B0AC0B7873346DAE"
@@ -1587,6 +1781,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38177C2F274049938B8558EF73A86091"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\green pin.png"
+            "TargetName" = "8:green pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_382203B568EC04B3FCD37CFAF9A476D2"
             {
             "AssemblyRegister" = "3:1"
@@ -1649,6 +1863,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_39E835FED442443F9BEC8630C8D0E427"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet-src.js"
+            "TargetName" = "8:leaflet-src.js"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3A620E29104FD852227C4BC72EDBC5FD"
             {
             "AssemblyRegister" = "3:1"
@@ -1709,6 +1943,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_47581AD7144C4046A0146F709D263857"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leafletembed.js"
+            "TargetName" = "8:leafletembed.js"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_47F6B1DA4032CC74473D69F2635A4BCC"
@@ -2021,6 +2275,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_680DDD9D8D554E898B83C2CE2D1D587A"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet-src.esm.js.map"
+            "TargetName" = "8:leaflet-src.esm.js.map"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7024C89618EF5F7AA645DEA18957700B"
             {
             "AssemblyRegister" = "3:1"
@@ -2081,6 +2355,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7105305FF852448F880712785A84D06E"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\testleaflet.html"
+            "TargetName" = "8:testleaflet.html"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_735C953677E831C1CBEB96B2EB797A36"
@@ -2796,6 +3090,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A658F117FE2748A3A20AFC2EDBFADA19"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\yellow pin.png"
+            "TargetName" = "8:yellow pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7137D7BADA84C6A91D50F428D019590"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\layers.png"
+            "TargetName" = "8:layers.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A813732DB157D9DE555D1AEF6CCFBC4C"
             {
             "AssemblyRegister" = "3:1"
@@ -3106,6 +3440,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBE71AC8480A43E1834E2B8F7C843891"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\red pin.png"
+            "TargetName" = "8:red pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BC03029B62C0D987E791B2C1FCC01E5D"
             {
             "AssemblyRegister" = "3:1"
@@ -3166,6 +3520,66 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C18408EBD16A41498B33ED555D5CF3EA"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet.js"
+            "TargetName" = "8:leaflet.js"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C269BE9E41D3402295CEA3C273439835"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\lblue pin.png"
+            "TargetName" = "8:lblue pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C49C881A2D64429A8F93780C5A6683D1"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet.css"
+            "TargetName" = "8:leaflet.css"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C4BB25B9A79A7E250438EC51CD5E867F"
@@ -3385,6 +3799,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D444A21918FB447EB89496A24080D833"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\bluepin.png"
+            "TargetName" = "8:bluepin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D69FD2E525D84099BCA2385888A74134"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\leaflet-src.esm.js"
+            "TargetName" = "8:leaflet-src.esm.js"
+            "Tag" = "8:"
+            "Folder" = "8:_99349867ADFE4F9CB7372EB320FF9C35"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D9C3A06A4DC64D1689F686FFCC8CDA67"
             {
             "AssemblyRegister" = "3:1"
@@ -3445,6 +3899,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E01DF349F6164D0F8219BD0EAE68BD4B"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\layers-2x.png"
+            "TargetName" = "8:layers-2x.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E101DAB26B9DD6B6BCB245815CAC7E6B"
@@ -3538,6 +4012,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB74E002D84E424A83098F89052A747B"
+            {
+            "SourcePath" = "8:..\\WpfApp1\\Leaflet\\images\\orange pin.png"
+            "TargetName" = "8:orange pin.png"
+            "Tag" = "8:"
+            "Folder" = "8:_22A8BE36F462419290DD188D1FBFFBE0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EDB56C6258FA6027213E58806065AFE6"
@@ -3775,6 +4269,28 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_99349867ADFE4F9CB7372EB320FF9C35"
+                    {
+                    "Name" = "8:Leaflet"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_CF4D8ACC6FB54E838148D5819A7D1833"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_22A8BE36F462419290DD188D1FBFFBE0"
+                            {
+                            "Name" = "8:images"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_499DE66C5CB54FB5A05DBCD28F4AF70F"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -3793,15 +4309,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:S2Assigning"
-        "ProductCode" = "8:{A881D5C5-A02E-48DF-A482-78DA32C5ECA5}"
-        "PackageCode" = "8:{A3DF4295-2DBD-497F-A88D-00C3741E7B61}"
+        "ProductCode" = "8:{45D68699-230C-4E1F-9DC5-CEEB65D46BBF}"
+        "PackageCode" = "8:{9392C7EE-9D23-4CF2-BB03-AACB69A299C5}"
         "UpgradeCode" = "8:{9F1AE03E-279F-4424-ABE0-6A5B965DCFAF}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:4.0.6"
+        "ProductVersion" = "8:5.0.0"
         "Manufacturer" = "8:S2Inspections"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WpfApp1
 {
-    class InspectionJSONClass
+    public class InspectionJSONClass
     {
             //public string type { get; set; }
             //public string url { get; set; }

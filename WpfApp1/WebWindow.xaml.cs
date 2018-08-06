@@ -22,13 +22,13 @@ namespace WpfApp1
     /// </summary>
     public partial class WebWindow : Window
     {
-        public WebWindow(List<OfficialInspectorClass> inspectors, List<InspectionMapItem> assign, List<InspectionMapItem> with, List<InspectionMapItem> val, List<InspectionMapItem> accept)
+        public WebWindow(List<OfficialInspectorClass> inspectors, List<InspectionMapItem> assign, List<InspectionMapItem> with, List<InspectionMapItem> val, List<InspectionMapItem> accept, InspectionJSONClass currentInspection)
         {
             InitializeComponent();
 
             string curDir = Directory.GetCurrentDirectory();
             Uri MapUrl = new Uri(String.Format("file:///{0}/Leaflet/testleaflet.html", curDir));
-            Mapbrowser.Navigate(MapUrl); //this is the deployment url, update the html code and then move to here
+            Mapbrowser.Navigate(MapUrl);
             Object[] test = { 51.505, -0.09 };
             Mapbrowser.LoadCompleted += webb_LoadCompleted;
             void webb_LoadCompleted(object sender, NavigationEventArgs e)
@@ -40,11 +40,18 @@ namespace WpfApp1
                 }
                 for(int i = 0; i < assign.Count; i++)
                 {
-                    Mapbrowser.InvokeScript("mapAssign", new Object[] { Convert.ToDouble(assign[i].Property_Latitude__c), Convert.ToDouble(assign[i].Property_Longitude__c), assign[i].Name });
+                    if (currentInspection.Name == assign[i].Name)
+                    {
+
+                    }
+                    else
+                    {
+                        Mapbrowser.InvokeScript("mapAssign", new Object[] { Convert.ToDouble(assign[i].Property_Latitude__c), Convert.ToDouble(assign[i].Property_Longitude__c), assign[i].Name });
+                    }
                 }
                 for(int i = 0; i < with.Count; i++)
                 {
-                    Mapbrowser.InvokeScript("mapWith", new Object[] { Convert.ToDouble(with[i].Property_Latitude__c), Convert.ToDouble(with[i].Property_Longitude__c), with[i].Name });
+                    Mapbrowser.InvokeScript("mapWith", new Object[] { Convert.ToDouble(with[i].Property_Latitude__c), Convert.ToDouble(with[i].Property_Longitude__c), with[i].Name, with[i].Rep_ID_Inspector_Formula__c });
                 }
                 for (int i = 0; i < val.Count; i++)
                 {
@@ -52,9 +59,9 @@ namespace WpfApp1
                 }
                 for (int i = 0; i < accept.Count; i++)
                 {
-                    Mapbrowser.InvokeScript("mapAccept", new Object[] { Convert.ToDouble(accept[i].Property_Latitude__c), Convert.ToDouble(accept[i].Property_Longitude__c), accept[i].Name });
+                    Mapbrowser.InvokeScript("mapAccept", new Object[] { Convert.ToDouble(accept[i].Property_Latitude__c), Convert.ToDouble(accept[i].Property_Longitude__c), accept[i].Name, accept[i].Rep_ID_Inspector_Formula__c });
                 }
-                Mapbrowser.InvokeScript("centerMap", new Object[] { 41.750720, -111.840137 });
+                Mapbrowser.InvokeScript("mapcurrent", new Object[] { currentInspection.Property_Latitude__c, currentInspection.Property_Longitude__c, currentInspection.Name });
 
             }
             
