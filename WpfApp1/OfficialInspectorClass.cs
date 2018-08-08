@@ -27,5 +27,6 @@ namespace WpfApp1
         public Dictionary<String, double?> feeDictionary { get; set; }
         public double? Max_Insp_Count__c { get; set; }
         public String Coverage_Area_Radius__c { get; set; }
+        public String Blacklist__c { get; set; }
     }
 }

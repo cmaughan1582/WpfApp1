@@ -37,7 +37,7 @@
         //var home = L.marker([41.750720, -111.840137], {icon: myIcon}).bindPopup("<b>Home</b><br />This is my house.");
         //var home1 = L.marker([41.750720, -111.840137]).bindPopup("<b>Home</b><br />This is my house.");
         //home.icon = myIcon;
-
+        var current = L.layerGroup();
         var inspectorLayer = L.layerGroup();
         var assignlayer = L.layerGroup();
         var withlayer = L.layerGroup();
@@ -52,19 +52,24 @@
         };
         //mymap.addLayer(layer1);
         //mymap.addLayer(inspectorLayer);
-        //mymap.addLayer(assignlayer);
+        mymap.addLayer(assignlayer);
         //mymap.addLayer(withlayer);
         L.control.layers(null, overlaymaps).addTo(mymap);
         //centerMap(25.520581, -103.40607);
-        /*TODO
-            write functions that place markers based on array of strings passed in
-            figure out how to load local html page with webbrowser
-            test planting markers, and that's it basically
-        */
 
-        function centerMap(lat, lon) {
+
+        function centerMap(lat, lon, name) {
+            var currentIcon = L.icon({
+                iconUrl: 'images/bluepin.png',
+                iconSize: [25, 40],
+                iconAnchor: [13, 39],
+                popupAnchor: [0, -30],
+            });
+            mymap.removeLayer(current);
             mymap.setView([lat, lon], 13);
-
+            current = L.layerGroup();
+            var imarker = L.marker([lat, lon], { icon: currentIcon }).bindPopup("<b>" + name + "</b>").addTo(current);
+            current.addTo(mymap);
         }
         function mapInspectors(lat, lon, name, grade) {
             var inspIcon = L.icon({
@@ -119,7 +124,8 @@
                 iconAnchor: [13, 39],
                 popupAnchor: [0, -30],
             });
-            var imarker = L.marker([lat, lon], { icon: currentIcon }).bindPopup("<b>" + name + "</b>").addTo(mymap);
+            var imarker = L.marker([lat, lon], { icon: currentIcon }).bindPopup("<b>" + name + "</b>").addTo(current);
+            current.addTo(mymap);
             mymap.setView([lat, lon], 13);
         }
     </script>

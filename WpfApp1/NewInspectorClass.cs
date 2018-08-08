@@ -41,5 +41,6 @@ namespace WpfApp1
         public Double? CME_MF__c { get; set; }
         public String Coverage_Area_Radius__c { get; set; }
         public Double? Max_Insp_Count__c { get; set; }
+        public String Blacklist__c { get; set; }
     }
 }

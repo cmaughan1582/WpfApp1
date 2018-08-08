@@ -22,7 +22,7 @@ namespace WpfApp1
             if (!HUDmode)
             {
                 records = client.Query<NewInspectorClass>(
-                    "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c, Max_Insp_Count__c, Coverage_Area_Radius__c " +
+                    "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c, Max_Insp_Count__c, Coverage_Area_Radius__c, Blacklist__c " +
                     "From Account " +
                     "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
                 records.Add(client.FindById<NewInspectorClass>("Account", "0013700000W5oq8")); //this adds nc128 jessica jackson
@@ -70,6 +70,7 @@ namespace WpfApp1
                         {
                             addObject.ShippingPostalCode = records[i].ShippingPostalCode;
                         }
+                        addObject.Blacklist__c = records[i].Blacklist__c;
                         addObject.Coverage_Area_Radius__c = records[i].Coverage_Area_Radius__c;
                         addObject.Max_Insp_Count__c = records[i].Max_Insp_Count__c;
                         addObject.Phone = records2[0].Phone;
@@ -180,6 +181,7 @@ namespace WpfApp1
                 updateInspector.Inspector__c = assignID;
                 client.Update("Inspection__c", entry.Key, updateInspector);
                 i++;
+                
                 progress.Report("Orders Assigned: " + i + " of " + assignDict.Count);
             }
         }

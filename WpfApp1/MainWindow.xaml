@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Assigning" WindowState="Maximized"
-        Icon="newlogo_6zt_icon.ico">
+        Icon="newlogo_6zt_icon.ico"
+        Closed="Window1_Closed">
+        
     <Canvas RenderTransformOrigin="0.499,0.505" Name="Canvas1" Margin="0,0,0,0">
 
         <!--This is the starting page contents-->
@@ -44,7 +46,7 @@
             <Grid Name="First_Search_Button" Visibility="Visible" Canvas.Top="196" Width="{Binding ActualWidth, ElementName=Canvas1}">
                 <Button  Content="Search" Canvas.Left="363" Canvas.Top="244" Width="74" Click="First_Search_Button_Click" HorizontalAlignment="Center"/>
             </Grid>
-            <Button Name="Auto_assign" Visibility="Collapsed" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
+            <Button Name="Auto_assign" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
             
         </Canvas>
 

@@ -22,6 +22,10 @@ namespace WpfApp1
     /// </summary>
     public partial class WebWindow : Window
     {
+        public WebWindow()
+        {
+            //InitializeComponent();
+        }
         public WebWindow(List<OfficialInspectorClass> inspectors, List<InspectionMapItem> assign, List<InspectionMapItem> with, List<InspectionMapItem> val, List<InspectionMapItem> accept, InspectionJSONClass currentInspection)
         {
             InitializeComponent();
@@ -62,9 +66,14 @@ namespace WpfApp1
                     Mapbrowser.InvokeScript("mapAccept", new Object[] { Convert.ToDouble(accept[i].Property_Latitude__c), Convert.ToDouble(accept[i].Property_Longitude__c), accept[i].Name, accept[i].Rep_ID_Inspector_Formula__c });
                 }
                 Mapbrowser.InvokeScript("mapcurrent", new Object[] { currentInspection.Property_Latitude__c, currentInspection.Property_Longitude__c, currentInspection.Name });
-
+                Closed += MainWindow.MapClose;
             }
             
+        }
+
+        public void searchMap(double latitude, double longitude, string name)
+        {
+            Mapbrowser.InvokeScript("centerMap", new Object[] { latitude, longitude, name });
         }
     }
 }
