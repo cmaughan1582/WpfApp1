@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GeoCoordinatePortable;
+using Newtonsoft.Json;
 using SalesforceSharp;
 using System;
 using System.Collections.Generic;
@@ -183,6 +184,419 @@ namespace WpfApp1
                 i++;
                 
                 progress.Report("Orders Assigned: " + i + " of " + assignDict.Count);
+            }
+        }
+        public static void Longwork3(IProgress<string> progress, SalesforceClient client, List<OfficialInspectorClass> workingList, List<String> autoqueue)
+        {
+            InspectionJSONClass currentInspection = new InspectionJSONClass();
+            List<String> assignedarray = new List<String>();
+            List<String> skippedarray = new List<String>();
+            string inspectorAssign = "";
+            List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
+            List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
+            //SortNumber = 0;
+            //List<String> autoqueue = sortAssignQueue();
+            //these two lines can test the logic for a specific order
+            //List<String> autoqueue = new List<string>();
+            //autoqueue.Add("163707");
+            for (int i = 0; i < autoqueue.Count; i++)
+            {
+                tempList = new List<OfficialInspectorClass>();
+                templist2 = new List<OfficialInspectorClass>();
+                String searchnumber = autoqueue[i].Substring(0, 6);
+                currentInspection = findInspectionbyOrderNumber(searchnumber, client);
+                if (currentInspection.Auto_Assign_Skip__c == false)
+                {
+                    List<string> historyList = new List<string>();
+                    inspectorAssign = "";
+
+                    workingList = sortByDistance(client, workingList, currentInspection);
+                    for (int j = 0; j < workingList.Count; j++)
+                    {
+                        if (workingList[j].currentDistance <= Convert.ToInt32(workingList[j].Coverage_Area_Radius__c) && workingList[j].assignedInspections < workingList[j].Max_Insp_Count__c)
+                        {
+                            tempList.Add(workingList[j]);
+                        }
+                    }
+                    //Console.WriteLine(tempList.Count);
+                    //Console.ReadLine();
+                    var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND Field='Rep_ID_Inspector_history_tracking__c'");
+                    for (int j = 0; j < history.Count; j++)
+                    {
+                        if (history[j].NewValue.Equals("-") && history[j].OldValue != null)
+                        {
+                            historyList.Add(history[j].OldValue);
+                        }
+                    }
+                    for (int j = 0; j < tempList.Count; j++)
+                    {
+                        String compareString = tempList[j].Rep_ID__c + " - " + tempList[j].Name;
+                        if (tempList[j].Blacklist__c == null)
+                        {
+                            tempList[j].Blacklist__c = "";
+                        }
+                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold" && tempList[j].feeDictionary[currentInspection.Fee_Type_Text__c] != null && !tempList[j].Blacklist__c.Contains(currentInspection.Division__c))
+                        {
+                            templist2.Add(tempList[j]);
+                        }
+                    }
+                    tempList = templist2;
+                    templist2 = new List<OfficialInspectorClass>();
+                    if (tempList.Count > 0)
+                    {
+                        if (tempList.Count > 1)
+                        {
+                            for (int j = 0; j < tempList.Count; j++)
+                            {
+                                if (tempList[j].Status__c == "New Rep")
+                                {
+                                    templist2.Add(tempList[j]);
+                                }
+                            }
+                            if (templist2.Count == 0)
+                            {
+                                //TOP REP LOGIC GOES HERE!!!
+                                templist2 = new List<OfficialInspectorClass>();
+                                for (int j = 0; j < tempList.Count; j++)
+                                {
+                                    if (tempList[j].Status__c == "Top Rep")
+                                    {
+                                        templist2.Add(tempList[j]);
+                                    }
+                                }
+                                if (templist2.Count == 0)
+                                {
+                                    tempList.Sort((x, y) => y.Inspector_Ranking__c.CompareTo(x.Inspector_Ranking__c));
+                                    if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                                    {
+                                        if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                            updateInspectorCount(tempList[0].contactID, workingList);
+                                        }
+                                        else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                        {
+                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign = tempList[1].Name;
+                                            updateInspectorCount(tempList[1].contactID,workingList);
+                                        }
+                                        else
+                                        {
+                                            if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                            {
+                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign = tempList[0].Name;
+                                                updateInspectorCount(tempList[0].contactID,workingList);
+                                            }
+                                            else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                            {
+                                                //inspectorAssign = tempList[1].contactID;
+                                                inspectorAssign = tempList[1].Name;
+                                                updateInspectorCount(tempList[1].contactID, workingList);
+                                            }
+                                            else
+                                            {
+                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign = tempList[0].Name;
+                                                updateInspectorCount(tempList[0].contactID, workingList);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign = tempList[0].Name;
+                                        updateInspectorCount(tempList[0].contactID, workingList);
+                                    }
+                                }
+                                else if (templist2.Count == 1)
+                                {
+                                    //inspectorAssign = templist2[0].contactID;
+                                    inspectorAssign = templist2[0].Name;
+                                    updateInspectorCount(templist2[0].contactID, workingList);
+                                }
+                                else
+                                {
+                                    tempList = templist2;
+                                    tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
+                                    if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                                    {
+                                        if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                            updateInspectorCount(tempList[0].contactID, workingList);
+                                        }
+                                        else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                        {
+                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign = tempList[1].Name;
+                                            updateInspectorCount(tempList[1].contactID, workingList);
+                                        }
+                                        else
+                                        {
+                                            if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                            {
+                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign = tempList[0].Name;
+                                                updateInspectorCount(tempList[0].contactID, workingList);
+                                            }
+                                            else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                            {
+                                                //inspectorAssign = tempList[1].contactID;
+                                                inspectorAssign = tempList[1].Name;
+                                                updateInspectorCount(tempList[1].contactID, workingList);
+                                            }
+                                            else
+                                            {
+                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign = tempList[0].Name;
+                                                updateInspectorCount(tempList[0].contactID, workingList);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign = tempList[0].Name;
+                                        updateInspectorCount(tempList[0].contactID, workingList);
+                                    }
+                                }
+                                //this is something....
+
+                            }
+                            else if (templist2.Count == 1)
+                            {
+                                //inspectorAssign = templist2[0].contactID;
+                                inspectorAssign = templist2[0].Name;
+                                updateInspectorCount(templist2[0].contactID, workingList);
+                            }
+                            else
+                            {
+                                //NEW REP MULTIPLE GOES HERE
+                                tempList = templist2;
+                                tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
+                                if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
+                                {
+                                    if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                    {
+                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign = tempList[0].Name;
+                                        updateInspectorCount(tempList[0].contactID, workingList);
+                                    }
+                                    else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
+                                    {
+                                        //inspectorAssign = tempList[1].contactID;
+                                        inspectorAssign = tempList[1].Name;
+                                        updateInspectorCount(tempList[1].contactID, workingList);
+                                    }
+                                    else
+                                    {
+                                        if (tempList[0].currentDistance < tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                            updateInspectorCount(tempList[0].contactID, workingList);
+                                        }
+                                        else if (tempList[0].currentDistance > tempList[1].currentDistance)
+                                        {
+                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign = tempList[1].Name;
+                                            updateInspectorCount(tempList[1].contactID, workingList);
+                                        }
+                                        else
+                                        {
+                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign = tempList[0].Name;
+                                            updateInspectorCount(tempList[0].contactID, workingList);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //inspectorAssign = tempList[0].contactID;
+                                    inspectorAssign = tempList[0].Name;
+                                    updateInspectorCount(tempList[0].contactID, workingList);
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            //inspectorAssign = tempList[0].contactID;
+                            inspectorAssign = tempList[0].Name;
+                            updateInspectorCount(tempList[0].contactID, workingList);
+                        }
+                        UpdateInspectorClass updateInspector = new UpdateInspectorClass();
+                        updateInspector.Inspector__c = inspectorAssign;
+                        assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
+                        //updateInspectorCount(tempList[0].contactID);
+                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                    }
+                    else
+                    {
+                        skippedarray.Add((currentInspection.Name + ": Skipped"));
+                        //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c; this code isn't even correct, make sure to fix
+                    }
+                }
+                //put progress here, end of for loop
+                progress.Report("Orders Assigned: " + i + " of " + autoqueue.Count);
+            }
+            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Assigned.txt", assignedarray);
+            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Skipped.txt", skippedarray);
+        }
+        public static void updateInspectorCount(string contactID, List<OfficialInspectorClass> workingList)
+        {
+            for (int i = 0; i < workingList.Count; i++)
+            {
+                if (workingList[i].contactID == contactID)
+                {
+                    if (workingList[i].assignedInspections == null)
+                    {
+                        workingList[i].assignedInspections = 1;
+                    }
+                    else
+                    {
+                        workingList[i].assignedInspections++;
+                    }
+                }
+            }
+        }
+        private static List<OfficialInspectorClass> sortByDistance(SalesforceClient client, List<OfficialInspectorClass> workingList, InspectionJSONClass currentInspection)
+        {
+            String mapKey = "On5gRfRDnoozDkk8zKjo5GpXGbvYCycm";
+            GeoCoordinate currentGeopoint;
+            if (currentInspection.Property_Latitude__c == null)
+            {
+                String currentInspectionAddress;
+                String JsonReturn = ("");
+                LatLngClass.RootObject coordinates = new LatLngClass.RootObject();
+                //var array;
+                if (!currentInspection.Street_Address__c.Contains(","))
+                {
+                    String modifiedstreet = currentInspection.Street_Address__c.Replace('&', '-');
+                    currentInspectionAddress = (modifiedstreet + ", " + currentInspection.City__c + ", " + currentInspection.State__c);
+                }
+                else
+                {
+                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                }
+                JsonReturn = ("");
+                using (var client1 = new HttpClient())
+                {
+                    String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                        + mapKey + "&location=" + currentInspectionAddress);
+                    var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                    request.Headers.Add("X-PrettyPrint", "1");
+                    var response = client1.SendAsync(request).Result;
+                    JsonReturn = response.Content.ReadAsStringAsync().Result;
+                }
+                coordinates = new LatLngClass.RootObject();
+                coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                var array = coordinates.results.ToArray();
+                var array2 = array[0].locations.ToArray();
+                if (array2.Length == 1)
+                {
+
+                }
+                else
+                {
+                    currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c + ", " + currentInspection.Zip_Code__c);
+                    JsonReturn = ("");
+                    using (var client1 = new HttpClient())
+                    {
+                        String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                            + mapKey + "&location=" + currentInspectionAddress);
+                        var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                        request.Headers.Add("X-PrettyPrint", "1");
+                        var response = client1.SendAsync(request).Result;
+                        JsonReturn = response.Content.ReadAsStringAsync().Result;
+                    }
+                    coordinates = new LatLngClass.RootObject();
+                    coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                    array = coordinates.results.ToArray();
+                    array2 = array[0].locations.ToArray();
+                    if (array2.Length == 1)
+                    {
+
+                    }
+                    else
+                    {
+
+                        currentInspectionAddress = (currentInspection.City__c + ", " + currentInspection.State__c);
+                        JsonReturn = ("");
+                        using (var client1 = new HttpClient())
+                        {
+                            String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                + mapKey + "&location=" + currentInspectionAddress);
+                            var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                            request.Headers.Add("X-PrettyPrint", "1");
+                            var response = client1.SendAsync(request).Result;
+                            JsonReturn = response.Content.ReadAsStringAsync().Result;
+                        }
+                        coordinates = new LatLngClass.RootObject();
+                        coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                        array = coordinates.results.ToArray();
+                        array2 = array[0].locations.ToArray();
+                        if (array2.Length == 1)
+                        {
+
+                        }
+                        else
+                        {
+                            currentInspectionAddress = (currentInspection.Zip_Code__c);
+                            JsonReturn = ("");
+                            using (var client1 = new HttpClient())
+                            {
+                                String restRequest = ("http://www.mapquestapi.com/geocoding/v1/address?key="
+                                    + mapKey + "&location=" + currentInspectionAddress);
+                                var request = new HttpRequestMessage(HttpMethod.Get, restRequest);
+                                request.Headers.Add("X-PrettyPrint", "1");
+                                var response = client1.SendAsync(request).Result;
+                                JsonReturn = response.Content.ReadAsStringAsync().Result;
+                            }
+                            coordinates = new LatLngClass.RootObject();
+                            coordinates = JsonConvert.DeserializeObject<LatLngClass.RootObject>(JsonReturn);
+                            array = coordinates.results.ToArray();
+                            array2 = array[0].locations.ToArray();
+                        }
+                    }
+                }
+                double currentInspectionLatitude = array2[0].displayLatLng.lat;
+                double currentInspectionLongitute = array2[0].displayLatLng.lng;
+                string savelat = currentInspectionLatitude.ToString();
+                string savelon = currentInspectionLongitute.ToString();
+                currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
+                SaveCoordinatesClass updateCoordinates = new SaveCoordinatesClass();
+                updateCoordinates.Property_Latitude__c = savelat;
+                updateCoordinates.Property_Longitude__c = savelon;
+                client.Update("Inspection__c", currentInspection.Id, updateCoordinates);
+            }
+            else
+            {
+                double currentInspectionLatitude = Convert.ToDouble(currentInspection.Property_Latitude__c);
+                double currentInspectionLongitute = Convert.ToDouble(currentInspection.Property_Longitude__c);
+                currentGeopoint = new GeoCoordinate(currentInspectionLatitude, currentInspectionLongitute);
+            }
+            for (int i = 0; i < workingList.Count; i++)
+            {
+                GeoCoordinate compareVal = new GeoCoordinate(workingList[i].latitude.GetValueOrDefault(), workingList[i].longitute.GetValueOrDefault());
+                workingList[i].currentDistance = (0.00062137 * currentGeopoint.GetDistanceTo(compareVal));
+            }
+            workingList.Sort((x, y) => x.currentDistance.CompareTo(y.currentDistance));
+            return workingList;
+        }
+        static private InspectionJSONClass findInspectionbyOrderNumber(String orderNumber, SalesforceClient client)
+        {
+            var record = client.Query<QueryforIDclass>("SELECT Id From Inspection__c WHERE Name='" + orderNumber + "'");
+            if (record.Count != 1)
+            {
+                return null;
+            }
+            else
+            {
+                return client.FindById<InspectionJSONClass>("Inspection__c", record[0].Id);
             }
         }
     }

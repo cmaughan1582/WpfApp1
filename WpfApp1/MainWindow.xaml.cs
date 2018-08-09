@@ -1240,180 +1240,19 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             SearchResults();
         }
         //This is the autoassign function, the button is on the search page but it isn't really related to searching so I will just leave it here
-        private void Auto_assign_Click(object sender, RoutedEventArgs e)
+        async private void Auto_assign_Click(object sender, RoutedEventArgs e)
         {
-            List<String> assignedarray = new List<String>();
-            List<String> skippedarray = new List<String>();
-            string inspectorAssign = "";
-            List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
-            List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
-            SortNumber = 0;
             List<String> autoqueue = sortAssignQueue();
-            //List<String> autoqueue = new List<string>();
-            //autoqueue.Add("163518");
-            for(int i = 0; i < autoqueue.Count; i++)
-            {
-                tempList = new List<OfficialInspectorClass>();
-                templist2 = new List<OfficialInspectorClass>();
-                String searchnumber = autoqueue[i].Substring(0, 6);
-                currentInspection = findInspectionbyOrderNumber(searchnumber, client);
-                if (currentInspection.Auto_Assign_Skip__c == false)
-                {
-                    List<string> historyList = new List<string>();
-                    inspectorAssign = "";
-                    
-                    sortByDistance(client);
-                    for (int j = 0; j < workingList.Count; j++)
-                    {
-                        if (workingList[j].currentDistance <= Convert.ToInt32(workingList[j].Coverage_Area_Radius__c) && workingList[j].assignedInspections < workingList[j].Max_Insp_Count__c)
-                        {
-                            tempList.Add(workingList[j]);
-                        }
-                    }
-                    //Console.WriteLine(tempList.Count);
-                    //Console.ReadLine();
-                    var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND Field='Rep_ID_Inspector_history_tracking__c'");
-                    for (int j = 0; j < history.Count; j++)
-                    {
-                        if (history[j].NewValue.Equals("-") && history[j].OldValue != null)
-                        {
-                            historyList.Add(history[j].OldValue);
-                        }
-                    }
-                    for (int j = 0; j < tempList.Count; j++)
-                    {
-                        String compareString = tempList[j].Rep_ID__c + " - " + tempList[j].Name;
-                        if(tempList[j].Blacklist__c == null)
-                        {
-                            tempList[j].Blacklist__c = "";
-                        }
-                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold" && tempList[j].feeDictionary[currentInspection.Fee_Type_Text__c] != null && tempList[j].Blacklist__c != currentInspection.Division__c) 
-                        {
-                            templist2.Add(tempList[j]);
-                        }
-                    }
-                    tempList = templist2;
-                    templist2 = new List<OfficialInspectorClass>();
-                    if (tempList.Count > 0)
-                    {
-                        if (tempList.Count > 1)
-                        {
-                            for (int j = 0; j < tempList.Count; j++)
-                            {
-                                if (tempList[j].Status__c == "Top Rep")
-                                {
-                                    templist2.Add(tempList[j]);
-                                }
-                            }
-                            if (templist2.Count == 0)
-                            {
-                                tempList.Sort((x, y) => y.Inspector_Ranking__c.CompareTo(x.Inspector_Ranking__c));
-                                if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
-                                {
-                                    if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                    {
-                                        //inspectorAssign = tempList[0].contactID;
-                                        inspectorAssign = tempList[0].Name;
-                                    }
-                                    else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                    {
-                                        //inspectorAssign = tempList[1].contactID;
-                                        inspectorAssign = tempList[1].Name;
-                                    }
-                                    else
-                                    {
-                                        if (tempList[0].currentDistance < tempList[1].currentDistance)
-                                        {
-                                            //inspectorAssign = tempList[0].contactID;
-                                            inspectorAssign = tempList[0].Name;
-                                        }
-                                        else if (tempList[0].currentDistance > tempList[1].currentDistance)
-                                        {
-                                            //inspectorAssign = tempList[1].contactID;
-                                            inspectorAssign = tempList[1].Name;
-                                        }
-                                        else
-                                        {
-                                            //inspectorAssign = tempList[0].contactID;
-                                            inspectorAssign = tempList[0].Name;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    //inspectorAssign = tempList[0].contactID;
-                                    inspectorAssign = tempList[0].Name;
-                                }
-                            }
-                            else if (templist2.Count == 1)
-                            {
-                                //inspectorAssign = templist2[0].contactID;
-                                inspectorAssign = templist2[0].Name;
-                            }
-                            else
-                            {
-                                tempList = templist2;
-                                tempList.Sort((x, y) => x.Inspector_Ranking__c.CompareTo(y.Inspector_Ranking__c));
-                                if (tempList[0].Inspector_Ranking__c == tempList[1].Inspector_Ranking__c)
-                                {
-                                    if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                    {
-                                        //inspectorAssign = tempList[0].contactID;
-                                        inspectorAssign = tempList[0].Name;
-                                    }
-                                    else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
-                                    {
-                                        //inspectorAssign = tempList[1].contactID;
-                                        inspectorAssign = tempList[1].Name;
-                                    }
-                                    else
-                                    {
-                                        if (tempList[0].currentDistance < tempList[1].currentDistance)
-                                        {
-                                            //inspectorAssign = tempList[0].contactID;
-                                            inspectorAssign = tempList[0].Name;
-                                        }
-                                        else if (tempList[0].currentDistance > tempList[1].currentDistance)
-                                        {
-                                            //inspectorAssign = tempList[1].contactID;
-                                            inspectorAssign = tempList[1].Name;
-                                        }
-                                        else
-                                        {
-                                            //inspectorAssign = tempList[0].contactID;
-                                            inspectorAssign = tempList[0].Name;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    //inspectorAssign = tempList[0].contactID;
-                                    inspectorAssign = tempList[0].Name;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //inspectorAssign = tempList[0].contactID;
-                            inspectorAssign = tempList[0].Name;
-                            updateInspectorCount(tempList[0].contactID);
-                        }
-                        UpdateInspectorClass updateInspector = new UpdateInspectorClass();
-                        updateInspector.Inspector__c = inspectorAssign;
-                        assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
-                        updateInspectorCount(tempList[0].contactID);
-                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
-                    }
-                    else
-                    {
-                        skippedarray.Add((currentInspection.Name + ": Skipped"));
-                        //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c; this code isn't even correct, make sure to fix
-                        Console.WriteLine("Skip");
-                    }
-                }
-            }
-            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Assigned.txt", assignedarray);
-            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Skipped.txt", skippedarray);
+            Search_Page.Visibility = Visibility.Collapsed;
+            rebuild_progress.Visibility = Visibility.Visible;
+            Building_database.Text = "Auto-Assigning Orders...";
+            Records_text.Text = "Orders Assigned:";
+            var progress = new Progress<string>(s => Records_text.Text = s);
+            await Task.Factory.StartNew(() => SecondThreadConcern.Longwork3(progress, client, workingList, autoqueue),
+                                        TaskCreationOptions.LongRunning);
+            rebuild_progress.Visibility = Visibility.Collapsed;
+            Database_Loaded.Text = "Orders have been auto-assigned!";
+            Search_Page.Visibility = Visibility.Visible;
         }
 
         private void Maptest_Click(object sender, RoutedEventArgs e)
