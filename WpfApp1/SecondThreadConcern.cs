@@ -186,7 +186,7 @@ namespace WpfApp1
                 progress.Report("Orders Assigned: " + i + " of " + assignDict.Count);
             }
         }
-        public static void Longwork3(IProgress<string> progress, SalesforceClient client, List<OfficialInspectorClass> workingList, List<String> autoqueue)
+        public static List<OfficialInspectorClass> Longwork3(IProgress<string> progress, SalesforceClient client, List<OfficialInspectorClass> workingList, List<String> autoqueue)
         {
             InspectionJSONClass currentInspection = new InspectionJSONClass();
             List<String> assignedarray = new List<String>();
@@ -445,6 +445,7 @@ namespace WpfApp1
             }
             System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Assigned.txt", assignedarray);
             System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Skipped.txt", skippedarray);
+            return workingList;
         }
         public static void updateInspectorCount(string contactID, List<OfficialInspectorClass> workingList)
         {

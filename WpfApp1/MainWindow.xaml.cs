@@ -1248,7 +1248,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             Building_database.Text = "Auto-Assigning Orders...";
             Records_text.Text = "Orders Assigned:";
             var progress = new Progress<string>(s => Records_text.Text = s);
-            await Task.Factory.StartNew(() => SecondThreadConcern.Longwork3(progress, client, workingList, autoqueue),
+            workingList = await Task.Factory.StartNew(() => SecondThreadConcern.Longwork3(progress, client, workingList, autoqueue),
                                         TaskCreationOptions.LongRunning);
             rebuild_progress.Visibility = Visibility.Collapsed;
             Database_Loaded.Text = "Orders have been auto-assigned!";
