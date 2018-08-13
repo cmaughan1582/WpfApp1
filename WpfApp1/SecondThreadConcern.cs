@@ -192,6 +192,7 @@ namespace WpfApp1
             List<String> assignedarray = new List<String>();
             List<String> skippedarray = new List<String>();
             string inspectorAssign = "";
+            string inspectorAssign1 = "";
             List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
             List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
             //SortNumber = 0;
@@ -205,10 +206,15 @@ namespace WpfApp1
                 templist2 = new List<OfficialInspectorClass>();
                 String searchnumber = autoqueue[i].Substring(0, 6);
                 currentInspection = findInspectionbyOrderNumber(searchnumber, client);
-                if (currentInspection.Auto_Assign_Skip__c == false)
+                if(currentInspection.ADHOC__c == null)
+                {
+                    currentInspection.ADHOC__c = "";
+                }
+                if (currentInspection.Auto_Assign_Skip__c == false || currentInspection.ADHOC__c.Contains("Rep Needed"))
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
+                    inspectorAssign1 = "";
 
                     workingList = sortByDistance(client, workingList, currentInspection);
                     for (int j = 0; j < workingList.Count; j++)
@@ -271,13 +277,13 @@ namespace WpfApp1
                                     {
                                         if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                         {
-                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign1 = tempList[0].contactID;
                                             inspectorAssign = tempList[0].Name;
                                             updateInspectorCount(tempList[0].contactID, workingList);
                                         }
                                         else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                         {
-                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign1 = tempList[1].contactID;
                                             inspectorAssign = tempList[1].Name;
                                             updateInspectorCount(tempList[1].contactID,workingList);
                                         }
@@ -285,19 +291,19 @@ namespace WpfApp1
                                         {
                                             if (tempList[0].currentDistance < tempList[1].currentDistance)
                                             {
-                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign1 = tempList[0].contactID;
                                                 inspectorAssign = tempList[0].Name;
                                                 updateInspectorCount(tempList[0].contactID,workingList);
                                             }
                                             else if (tempList[0].currentDistance > tempList[1].currentDistance)
                                             {
-                                                //inspectorAssign = tempList[1].contactID;
+                                                inspectorAssign1 = tempList[1].contactID;
                                                 inspectorAssign = tempList[1].Name;
                                                 updateInspectorCount(tempList[1].contactID, workingList);
                                             }
                                             else
                                             {
-                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign1 = tempList[0].contactID;
                                                 inspectorAssign = tempList[0].Name;
                                                 updateInspectorCount(tempList[0].contactID, workingList);
                                             }
@@ -305,14 +311,14 @@ namespace WpfApp1
                                     }
                                     else
                                     {
-                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign1 = tempList[0].contactID;
                                         inspectorAssign = tempList[0].Name;
                                         updateInspectorCount(tempList[0].contactID, workingList);
                                     }
                                 }
                                 else if (templist2.Count == 1)
                                 {
-                                    //inspectorAssign = templist2[0].contactID;
+                                    inspectorAssign1 = templist2[0].contactID;
                                     inspectorAssign = templist2[0].Name;
                                     updateInspectorCount(templist2[0].contactID, workingList);
                                 }
@@ -324,13 +330,13 @@ namespace WpfApp1
                                     {
                                         if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                         {
-                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign1 = tempList[0].contactID;
                                             inspectorAssign = tempList[0].Name;
                                             updateInspectorCount(tempList[0].contactID, workingList);
                                         }
                                         else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                         {
-                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign1 = tempList[1].contactID;
                                             inspectorAssign = tempList[1].Name;
                                             updateInspectorCount(tempList[1].contactID, workingList);
                                         }
@@ -338,19 +344,19 @@ namespace WpfApp1
                                         {
                                             if (tempList[0].currentDistance < tempList[1].currentDistance)
                                             {
-                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign1 = tempList[0].contactID;
                                                 inspectorAssign = tempList[0].Name;
                                                 updateInspectorCount(tempList[0].contactID, workingList);
                                             }
                                             else if (tempList[0].currentDistance > tempList[1].currentDistance)
                                             {
-                                                //inspectorAssign = tempList[1].contactID;
+                                                inspectorAssign1 = tempList[1].contactID;
                                                 inspectorAssign = tempList[1].Name;
                                                 updateInspectorCount(tempList[1].contactID, workingList);
                                             }
                                             else
                                             {
-                                                //inspectorAssign = tempList[0].contactID;
+                                                inspectorAssign1 = tempList[0].contactID;
                                                 inspectorAssign = tempList[0].Name;
                                                 updateInspectorCount(tempList[0].contactID, workingList);
                                             }
@@ -358,17 +364,17 @@ namespace WpfApp1
                                     }
                                     else
                                     {
-                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign1 = tempList[0].contactID;
                                         inspectorAssign = tempList[0].Name;
                                         updateInspectorCount(tempList[0].contactID, workingList);
                                     }
                                 }
-                                //this is something....
+                                
 
                             }
                             else if (templist2.Count == 1)
                             {
-                                //inspectorAssign = templist2[0].contactID;
+                                inspectorAssign1 = templist2[0].contactID;
                                 inspectorAssign = templist2[0].Name;
                                 updateInspectorCount(templist2[0].contactID, workingList);
                             }
@@ -381,13 +387,13 @@ namespace WpfApp1
                                 {
                                     if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] < tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                     {
-                                        //inspectorAssign = tempList[0].contactID;
+                                        inspectorAssign1 = tempList[0].contactID;
                                         inspectorAssign = tempList[0].Name;
                                         updateInspectorCount(tempList[0].contactID, workingList);
                                     }
                                     else if (tempList[0].feeDictionary[currentInspection.Fee_Type_Text__c] > tempList[1].feeDictionary[currentInspection.Fee_Type_Text__c])
                                     {
-                                        //inspectorAssign = tempList[1].contactID;
+                                        inspectorAssign1 = tempList[1].contactID;
                                         inspectorAssign = tempList[1].Name;
                                         updateInspectorCount(tempList[1].contactID, workingList);
                                     }
@@ -395,19 +401,19 @@ namespace WpfApp1
                                     {
                                         if (tempList[0].currentDistance < tempList[1].currentDistance)
                                         {
-                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign1 = tempList[0].contactID;
                                             inspectorAssign = tempList[0].Name;
                                             updateInspectorCount(tempList[0].contactID, workingList);
                                         }
                                         else if (tempList[0].currentDistance > tempList[1].currentDistance)
                                         {
-                                            //inspectorAssign = tempList[1].contactID;
+                                            inspectorAssign1 = tempList[1].contactID;
                                             inspectorAssign = tempList[1].Name;
                                             updateInspectorCount(tempList[1].contactID, workingList);
                                         }
                                         else
                                         {
-                                            //inspectorAssign = tempList[0].contactID;
+                                            inspectorAssign1 = tempList[0].contactID;
                                             inspectorAssign = tempList[0].Name;
                                             updateInspectorCount(tempList[0].contactID, workingList);
                                         }
@@ -415,7 +421,7 @@ namespace WpfApp1
                                 }
                                 else
                                 {
-                                    //inspectorAssign = tempList[0].contactID;
+                                    inspectorAssign1 = tempList[0].contactID;
                                     inspectorAssign = tempList[0].Name;
                                     updateInspectorCount(tempList[0].contactID, workingList);
                                 }
@@ -424,27 +430,30 @@ namespace WpfApp1
                         }
                         else
                         {
-                            //inspectorAssign = tempList[0].contactID;
+                            inspectorAssign1 = tempList[0].contactID;
                             inspectorAssign = tempList[0].Name;
                             updateInspectorCount(tempList[0].contactID, workingList);
                         }
                         UpdateInspectorClass updateInspector = new UpdateInspectorClass();
-                        updateInspector.Inspector__c = inspectorAssign;
+                        updateInspector.Inspector__c = inspectorAssign1;
                         assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
                         //updateInspectorCount(tempList[0].contactID);
-                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                        client.Update("Inspection__c", currentInspection.Id, updateInspector);
                     }
                     else
                     {
                         skippedarray.Add((currentInspection.Name + ": Skipped"));
+                        UpdateAdhocClass repad = new UpdateAdhocClass();
+                        repad.ADHOC__c = "Rep Needed" + currentInspection.ADHOC__c;
+                        client.Update("Inspection__c", currentInspection.Id, repad);
                         //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c; this code isn't even correct, make sure to fix
                     }
                 }
                 //put progress here, end of for loop
                 progress.Report("Orders Assigned: " + i + " of " + autoqueue.Count);
             }
-            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Assigned.txt", assignedarray);
-            System.IO.File.WriteAllLines(@"C:\Users\cmaug\Desktop\Work\Skipped.txt", skippedarray);
+            System.IO.File.WriteAllLines(@"C:\Users\Public\S2 Inspections\Assigned.txt", assignedarray);
+            System.IO.File.WriteAllLines(@"C:\Users\Public\S2 Inspections\Skipped.txt", skippedarray);
             return workingList;
         }
         public static void updateInspectorCount(string contactID, List<OfficialInspectorClass> workingList)

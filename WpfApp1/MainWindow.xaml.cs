@@ -50,6 +50,7 @@ namespace WpfApp1
         const String consumerSecret = "2336265352872907529";
         const String clientID = "3MVG98SW_UPr.JFjKKrtQHBWMbQf..W2pXI.gHVL5J8AIH_lFnLkpIkaD5q.oinctEhqcKvRAzFqjkBJSDFZA";
         bool DirectoryExists = Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
+        bool autoDirectory = Directory.Exists(@"C:\Users\Public\S2 Inspections");
         bool loginExists = Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections", "logininfo.bin"));
         int SortNumber = 0;
 
@@ -74,6 +75,10 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             if (!DirectoryExists)
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\S2Inspections");
+            }
+            if (!autoDirectory)
+            {
+                Directory.CreateDirectory(@"C:\Users\Public\S2 Inspections");
             }
             login_page.Visibility = Visibility.Visible;
         }
