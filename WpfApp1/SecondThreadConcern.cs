@@ -444,7 +444,7 @@ namespace WpfApp1
                     {
                         skippedarray.Add((currentInspection.Name + ": Skipped"));
                         UpdateAdhocClass repad = new UpdateAdhocClass();
-                        repad.ADHOC__c = "Rep Needed" + currentInspection.ADHOC__c;
+                        repad.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
                         client.Update("Inspection__c", currentInspection.Id, repad);
                         //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c; this code isn't even correct, make sure to fix
                     }
