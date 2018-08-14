@@ -210,7 +210,7 @@ namespace WpfApp1
                 {
                     currentInspection.ADHOC__c = "";
                 }
-                if (currentInspection.Auto_Assign_Skip__c == false || currentInspection.ADHOC__c.Contains("Rep Needed"))
+                if (currentInspection.Auto_Assign_Skip__c == false && !currentInspection.ADHOC__c.Contains("Rep Needed"))
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
@@ -444,8 +444,15 @@ namespace WpfApp1
                     {
                         skippedarray.Add((currentInspection.Name + ": Skipped"));
                         UpdateAdhocClass repad = new UpdateAdhocClass();
-                        repad.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
-                        client.Update("Inspection__c", currentInspection.Id, repad);
+                        if(currentInspection.ADHOC__c == null)
+                        {
+                            currentInspection.ADHOC__c = "";
+                        }
+                        if(!currentInspection.ADHOC__c.Contains("Rep Needed"))
+                        {
+                            repad.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
+                            client.Update("Inspection__c", currentInspection.Id, repad);
+                        }
                         //currentInspection.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c; this code isn't even correct, make sure to fix
                     }
                 }
