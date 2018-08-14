@@ -123,6 +123,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             HUDmode = false;
             mode_page.Visibility = Visibility.Collapsed;
             Rebuild_page.Visibility = Visibility.Visible;
+            Auto_assign1.Visibility = Visibility.Collapsed;
         }
         //this is to set the mode to HUD for the program, second page after login
         private void Hud_button_Click(object sender, RoutedEventArgs e)
@@ -1823,6 +1824,21 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 }
             }
             return returnList;
+        }
+
+        private async void Auto_assign1_Click(object sender, RoutedEventArgs e)
+        {
+            List<String> autoqueue = sortAssignQueue();
+            Search_Page.Visibility = Visibility.Collapsed;
+            rebuild_progress.Visibility = Visibility.Visible;
+            Building_database.Text = "Auto-Assigning Orders...";
+            Records_text.Text = "Orders Assigned:";
+            var progress = new Progress<string>(s => Records_text.Text = s);
+            workingList = await Task.Factory.StartNew(() => SecondThreadConcern.Longwork4(progress, client, workingList, autoqueue),
+                                        TaskCreationOptions.LongRunning);
+            rebuild_progress.Visibility = Visibility.Collapsed;
+            Database_Loaded.Text = "Orders have been auto-assigned!";
+            Search_Page.Visibility = Visibility.Visible;
         }
     }//nothing goes below here
 }

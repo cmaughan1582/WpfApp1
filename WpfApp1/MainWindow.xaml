@@ -47,6 +47,7 @@
                 <Button  Content="Search" Canvas.Left="363" Canvas.Top="244" Width="74" Click="First_Search_Button_Click" HorizontalAlignment="Center"/>
             </Grid>
             <Button Name="Auto_assign" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
+            <Button Name="Auto_assign1" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign1_Click"  Width="80"/>
             
         </Canvas>
 

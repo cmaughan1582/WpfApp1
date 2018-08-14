@@ -616,5 +616,86 @@ namespace WpfApp1
                 return client.FindById<InspectionJSONClass>("Inspection__c", record[0].Id);
             }
         }
+        static public List<OfficialInspectorClass> Longwork4(IProgress<string> progress, SalesforceClient client, List<OfficialInspectorClass> workingList, List<String> autoqueue)
+        {
+            InspectionJSONClass currentInspection = new InspectionJSONClass();
+            List<String> assignedarray = new List<String>();
+            List<String> skippedarray = new List<String>();
+            string inspectorAssign = "";
+            string inspectorAssign1 = "";
+            //List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
+            //List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
+            for(int i = 0; i < autoqueue.Count; i++)
+            {
+                List<OfficialInspectorClass> tempList = new List<OfficialInspectorClass>();
+                List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
+                currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
+
+                if (currentInspection.Auto_Assign_Skip__c == false && !currentInspection.ADHOC__c.Contains("Rep Needed"))
+                {
+                    List<string> historyList = new List<string>();
+                    inspectorAssign = "";
+                    inspectorAssign1 = "";
+
+                    workingList = sortByDistance(client, workingList, currentInspection);
+                    for (int j = 0; j < workingList.Count; j++)
+                    {
+                        if (workingList[j].currentDistance <= 500)
+                        {
+                            tempList.Add(workingList[j]);
+                        }
+                    }
+                    //Console.WriteLine(tempList.Count);
+                    //Console.ReadLine();
+                    var history = client.Query<HistoryClass>("SELECT CreatedDate, Field, OldValue, NewValue From Inspection__History WHERE ParentId='" + currentInspection.Id + "' AND Field='Rep_ID_Inspector_history_tracking__c'");
+                    for (int j = 0; j < history.Count; j++)
+                    {
+                        if (history[j].NewValue.Equals("-") && history[j].OldValue != null)
+                        {
+                            historyList.Add(history[j].OldValue);
+                        }
+                    }
+                    for (int j = 0; j < tempList.Count; j++)
+                    {
+                        String compareString = tempList[j].Rep_ID__c + " - " + tempList[j].Name;
+                        if (!historyList.Contains(compareString) && tempList[j].Status__c != "On Hold")
+                        {
+                            templist2.Add(tempList[j]);
+                        }
+                    }
+                    tempList = templist2;
+                    templist2 = new List<OfficialInspectorClass>();
+                    if(tempList.Count > 0)
+                    {                                    
+                        inspectorAssign1 = tempList[0].contactID;
+                        inspectorAssign = tempList[0].Name;
+                        updateInspectorCount(tempList[0].contactID, workingList);
+                        UpdateInspectorClass updateInspector = new UpdateInspectorClass();
+                        updateInspector.Inspector__c = inspectorAssign1;
+                        assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
+                        //updateInspectorCount(tempList[0].contactID);
+                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                    }
+                    else
+                    {
+                        skippedarray.Add((currentInspection.Name + ": Skipped"));
+                        /*UpdateAdhocClass repad = new UpdateAdhocClass();
+                        if (currentInspection.ADHOC__c == null)
+                        {
+                            currentInspection.ADHOC__c = "";
+                        }
+                        if (!currentInspection.ADHOC__c.Contains("Rep Needed"))
+                        {
+                            repad.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
+                            client.Update("Inspection__c", currentInspection.Id, repad);
+                        }*/                        
+                    }
+                }
+                progress.Report("Orders Assigned: " + i + " of " + autoqueue.Count);
+            }
+            System.IO.File.WriteAllLines(@"C:\Users\Public\S2 Inspections\HUD Assigned.txt", assignedarray);
+            System.IO.File.WriteAllLines(@"C:\Users\Public\S2 Inspections\HUD Skipped.txt", skippedarray);
+            return workingList;
+        }
     }
 }
