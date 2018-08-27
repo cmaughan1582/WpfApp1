@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Assigning" WindowState="Maximized"
-        Icon="newlogo_6zt_icon.ico">
+        Icon="newlogo_6zt_icon.ico"
+        Closed="Window1_Closed">
+        
     <Canvas RenderTransformOrigin="0.499,0.505" Name="Canvas1" Margin="0,0,0,0">
 
         <!--This is the starting page contents-->
@@ -34,7 +36,7 @@
         </Canvas>
 
         <!--Search Page-->
-        <Canvas Name="Search_Page" Visibility="Collapsed">
+        <Canvas Name="Search_Page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
             <TextBlock Name="Database_Loaded" Visibility="Visible" HorizontalAlignment="Center" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="The database has been loaded!" VerticalAlignment="Top" FontSize="36" TextAlignment="Center" Canvas.Top="49"/>
             <TextBlock Name="ReSearch_Text" Visibility="Collapsed" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="That Inspection Wasn't Found" Canvas.Top="38" TextAlignment="Center" FontSize="36"/>
             <TextBlock Name="Search_Prompt" Visibility="Visible" Canvas.Left="0" Width="{Binding ActualWidth, ElementName=Canvas1}" TextWrapping="Wrap" Text="Enter an Inspection # to search" Canvas.Top="111" FontSize="24" TextAlignment="Center"/>
@@ -44,6 +46,9 @@
             <Grid Name="First_Search_Button" Visibility="Visible" Canvas.Top="196" Width="{Binding ActualWidth, ElementName=Canvas1}">
                 <Button  Content="Search" Canvas.Left="363" Canvas.Top="244" Width="74" Click="First_Search_Button_Click" HorizontalAlignment="Center"/>
             </Grid>
+            <Button Name="Auto_assign" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
+            <Button Name="Auto_assign1" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign1_Click"  Width="80"/>
+            <Button Name="Account_edit" Content="Edit Inspector" Canvas.Left="10" Canvas.Bottom="10" Width="90" Click="Account_edit_Click"/>
         </Canvas>
 
         <!--Results Page-->
@@ -55,11 +60,13 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <Button Name="Maptest" Canvas.Top="10" Visibility="Visible" Canvas.Right="715" Content="Map" Click="Maptest_Click"/>
             <Button Name="assign_button" Content="Assign" Canvas.Left="10" Canvas.Bottom="10" Height="23" Width="76" Click="Button_Click_3"/>
             <TextBlock Name="Order_number" Canvas.Left="5" TextWrapping="Wrap" Text="888888" Canvas.Top="5" FontSize="36" FontWeight="Bold" Width="181"/>
             <TextBlock Name="Form_Name" Canvas.Left="150" TextWrapping="Wrap" Text="FNMA" Canvas.Top="20" FontSize="18"/>
             <TextBlock Name="City_Name" Canvas.Left="5" TextWrapping="Wrap" Text="Philadelphia" Canvas.Top="55"  FontSize="18"/>
             <TextBlock Name="Hisotry" Canvas.Left="5" TextWrapping="Wrap" Text="Inspection History" Canvas.Top="85" FontSize="24" FontWeight="Bold" TextDecorations="Underline"/>
+            <Button Name="Change_coordinates" Canvas.Top="10" Canvas.Right="590" Content="Change Coordinates" Click="Change_coordinates_Click"/>
             <ListView Name="History_List" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Canvas.Left="5" Canvas.Top="122" Height="50" Width="500">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -160,14 +167,32 @@
         </Canvas>
 
         <!--This is the choose mode page-->
-        <Canvas Name="mode_page" Visibility="Collapsed">
+        <Canvas Name="mode_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
             <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Choose HUD or Non-HUD Mode" Canvas.Top="54" Width="{Binding ActualWidth, ElementName=Window1}" FontSize="36" TextAlignment="Center" FontWeight="Bold"/>
             <Grid Canvas.Top="140" Width="{Binding ActualWidth, ElementName=Canvas1}">
                 <Button Name="Non_Hud_button" Margin="150, 0, 0, 0" Content="Non-HUD" Width="74" Click="Non_Hud_button_Click" HorizontalAlignment="Center"/>
                 <Button Name="Hud_button" Content="HUD" Margin="0, 0, 150, 0" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
             </Grid>
+            
+        </Canvas>
+        <!--This is to find the account you want to edit-->
+        <Canvas Name="find_inspector_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
+            <TextBlock Text="Enter Account ID:" Canvas.Top="15" Canvas.Left="15" FontSize="36" FontWeight="Bold"/>
+            <TextBlock Text="The account ID is the letters and numbers after the .com/ and before any ? when the page is pulled up on Salesforce." Canvas.Top="60" Canvas.Left="15" FontSize="16"/>
+            <TextBox Name="inspector_account_box" Canvas.Left="320" Canvas.Top="28" Height="30" Width="195" FontSize="20"/>
+            <Button Name="search_account_id" Content="Search" Width="50" Canvas.Left="530" Canvas.Top="30" Click="search_account_id_Click"/>
+            <Button Name="Cancel_account_id" Content="Cancel" Width="50" Canvas.Left="590" Canvas.Top="30" Click="Cancel_account_id_Click"/>
+            <TextBlock Name="not_found" Text="That Account wasn't found, please try again." Visibility="Collapsed" Canvas.Top="90" Canvas.Left="15" FontSize="18" FontWeight="Bold"/>
         </Canvas>
 
+        <Canvas Name="edit_account_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
+            <TextBlock Name="edit_account_text" Text="ACCOUNT NAME" Canvas.Left="15" Canvas.Top="15" FontSize="36" FontWeight="Bold"/>
+            <Button Name="reset_coordinates" Content="Reset Coordinates" Width="105" Canvas.Top="70" Canvas.Left="15" Click="reset_coordinates_Click" />
+            <Button Name="HUD_exception" Content="Make HUD Exception" Width="120" Canvas.Top="70" Canvas.Left="135" Click="HUD_exception_Click"/>
+            <Button Name="edit_account_return" Content="Return" Width="45" Canvas.Top="100" Canvas.Left="15" Click="edit_account_return_Click"/>
+            <TextBlock Name="Status_edit" Visibility="Collapsed" Text="The Account was edited successfully!" Canvas.Left="15" Canvas.Top="130" FontSize="16" />
+            <Button Name="Reset_Hud_Exception" Content="Remove HUD Exception" Width="135" Canvas.Top="70" Canvas.Left="270" Click="Reset_Hud_Exception_Click"/>
+        </Canvas>
         <!--This is the new login info page-->
         <Canvas Name="credentials_page" Visibility="Collapsed">
             <TextBlock Name="credentials_text" Canvas.Left="0" TextWrapping="Wrap" Text="Enter Login Information Below" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="30" FontSize="36" TextAlignment="Center"/>
@@ -198,8 +223,20 @@
             </Grid>
             <Button Content="Return" Name="return_compare" Canvas.Bottom="25" Canvas.Left="100" Width="75" Click="return_compare_Click"/>            
         </Canvas>
-        
 
+        <Canvas Name="Change_coor_page" Visibility="Collapsed">
+            <TextBlock Text="Enter new Latitude:" FontSize="18" Canvas.Left="0" Canvas.Top="97" TextAlignment="Center"/>
+            <TextBlock Text="Enter new Longitude:" FontSize="18" Canvas.Left="0" Canvas.Top="125" TextAlignment="Center"/>
+            
+            <TextBox Name="newlatBox" Height="20" Canvas.Left="190" Canvas.Top="100" TextWrapping="Wrap" Text="" Width="120" HorizontalAlignment="Center" KeyDown="newAdhocBox_KeyDown"/>
+            <TextBox Name="newlonBox" Height="20" Canvas.Left="190" Canvas.Top="128" Width="120"/>
+            
+                <Button Name="Save_coor_button" Content="Change" Canvas.Left="10" Canvas.Top="170" Width="74" Click="Save_coor_button_Click"  HorizontalAlignment="Center"/>
+            
+            
+                <Button Name="Cancel_coor" Content="Cancel" Canvas.Left="110" Canvas.Top="170" Width="74" Click="Cancel_coor_Click"  HorizontalAlignment="Center"/>
+            
+        </Canvas>
 
 
     </Canvas>

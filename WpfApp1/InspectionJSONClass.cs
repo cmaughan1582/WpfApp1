@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WpfApp1
 {
-    class InspectionJSONClass
+    public class InspectionJSONClass
     {
             //public string type { get; set; }
             //public string url { get; set; }
@@ -202,5 +202,8 @@ namespace WpfApp1
             public double Gross_Margin__c { get; set; }
             public object Property_Rating__c { get; set; }
             public object PNA_Repairs__c { get; set; }
+            public String Property_Longitude__c { get; set; }
+            public String Property_Latitude__c { get; set; }
+            public bool Auto_Assign_Skip__c { get; set; }
     }
 }
