@@ -7,6 +7,7 @@ namespace WpfApp1
     [Serializable]
     class NewInspectorClass
     {
+        public int? SicDesc { get; set; }
         public Double? ShippingLatitude { get; set; }
         public Double? ShippingLongitude { get; set; }
         public String Id { get; set; }

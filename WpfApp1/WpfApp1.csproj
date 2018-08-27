@@ -140,6 +140,7 @@
     <Compile Include="CompareClass.cs" />
     <Compile Include="FormClass.cs" />
     <Compile Include="HistoryClass.cs" />
+    <Compile Include="HUDexceptionUpdate.cs" />
     <Compile Include="InspectionListItem.cs" />
     <Compile Include="InspectionMapItem.cs" />
     <Compile Include="InspectorFeesClass.cs" />

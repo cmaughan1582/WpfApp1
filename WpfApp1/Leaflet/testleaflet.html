@@ -123,8 +123,10 @@
                 iconSize: [25, 40],
                 iconAnchor: [13, 39],
                 popupAnchor: [0, -30],
-            });
+            })
+            current = L.layerGroup();
             var imarker = L.marker([lat, lon], { icon: currentIcon }).bindPopup("<b>" + name + "</b>").addTo(current);
+            
             current.addTo(mymap);
             mymap.setView([lat, lon], 13);
         }

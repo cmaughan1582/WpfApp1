@@ -26,7 +26,7 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+        NewInspectorClass editAccount = new NewInspectorClass();
         Window win2 = new WebWindow();
         //Closed += (s, e) => Application.Current.Shutdown();
         static bool mapopen = false;
@@ -1839,6 +1839,77 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             rebuild_progress.Visibility = Visibility.Collapsed;
             Database_Loaded.Text = "Orders have been auto-assigned!";
             Search_Page.Visibility = Visibility.Visible;
+        }
+
+        private void Account_edit_Click(object sender, RoutedEventArgs e)
+        {
+            Search_Page.Visibility = Visibility.Collapsed;
+            inspector_account_box.Text = "";
+            find_inspector_page.Visibility = Visibility.Visible;
+        }
+        private void Cancel_account_id_Click(object sender, RoutedEventArgs e)
+        {
+            find_inspector_page.Visibility = Visibility.Collapsed;
+            Database_Loaded.Text = "";
+            Search_Page.Visibility = Visibility.Visible;
+        }
+        private void search_account_id_Click(object sender, RoutedEventArgs e)
+        {
+            editAccount = new NewInspectorClass();
+            bool found = true;
+            string searchID = inspector_account_box.Text;
+            try
+            {
+               editAccount = client.FindById<NewInspectorClass>("Account", searchID);
+            }
+            catch(Exception error)
+            {                
+                found = false;
+                not_found.Visibility = Visibility.Visible;
+            }
+            if (found)
+            {
+                not_found.Visibility = Visibility.Collapsed;
+                find_inspector_page.Visibility = Visibility.Collapsed;
+                edit_account_text.Text = editAccount.Name;
+                Status_edit.Visibility = Visibility.Collapsed;
+                edit_account_page.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void reset_coordinates_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCoordinatesClass update1 = new UpdateCoordinatesClass();
+            update1.ShippingLatitude = null;
+            update1.ShippingLongitude = null;
+            client.Update("Account", editAccount.Id, update1);
+            Status_edit.Text = "The coordinates were reset!";
+            Status_edit.Visibility = Visibility.Visible;
+        }
+
+        private void edit_account_return_Click(object sender, RoutedEventArgs e)
+        {
+            edit_account_page.Visibility = Visibility.Collapsed;
+            Search_Page.Visibility = Visibility.Visible;
+            Database_Loaded.Text = "";
+        }
+
+        private void HUD_exception_Click(object sender, RoutedEventArgs e)
+        {
+            HUDexceptionUpdate update1 = new HUDexceptionUpdate();
+            update1.SicDesc = 1;
+            client.Update("Account", editAccount.Id, update1);
+            Status_edit.Text = "A HUD exception was added!";
+            Status_edit.Visibility = Visibility.Visible;
+        }
+
+        private void Reset_Hud_Exception_Click(object sender, RoutedEventArgs e)
+        {
+            HUDexceptionUpdate update1 = new HUDexceptionUpdate();
+            update1.SicDesc = null;
+            client.Update("Account", editAccount.Id, update1);
+            Status_edit.Text = "The HUD exception was removed!";
+            Status_edit.Visibility = Visibility.Visible;
         }
     }//nothing goes below here
 }

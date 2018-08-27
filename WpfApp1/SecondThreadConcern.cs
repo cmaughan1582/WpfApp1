@@ -25,8 +25,8 @@ namespace WpfApp1
                 records = client.Query<NewInspectorClass>(
                     "SELECT Id, Name, BillingPostalCode, ShippingPostalCode, Rep_ID__C, Comments__c, HUD_Certified__c, FNMA_Certified__c, Freddie_Mac_Certified__c, Inspector_Ranking__c, Status__c, ShippingLatitude, ShippingLongitude, FNMA_4260__c, FNMA_4261__c, FNMA_4262__c, No_Contact__c, Inspector_Rush__c, CMSA_2__c, Exterior_1__c, FNMA_HC_MBA__c, Exterior_2__c, CME_HC__c, CME_MF__c, Freddie_MF_MBA__c, MBA__c, MBA_2__c, HUD_REAC__c, Freddie_HC_MBA__c, FNMA_MF_MBA__c, CMSA__c, Cap_Improv__c, Max_Insp_Count__c, Coverage_Area_Radius__c, Blacklist__c " +
                     "From Account " +
-                    "WHERE Account_Inactive__c=false AND HUD_Certified__c=false AND Rep_ID__c!=null");
-                records.Add(client.FindById<NewInspectorClass>("Account", "0013700000W5oq8")); //this adds nc128 jessica jackson
+                    "WHERE Account_Inactive__c=false AND (HUD_Certified__c=false OR SicDesc!=null) AND Rep_ID__c!=null");
+                //records.Add(client.FindById<NewInspectorClass>("Account", "0013700000W5oq8")); //this adds nc128 jessica jackson
                 //records.Add(client.FindById<NewInspectorClass>("Account", "00137000009jaml"));
             }
             else
@@ -210,7 +210,7 @@ namespace WpfApp1
                 {
                     currentInspection.ADHOC__c = "";
                 }
-                if (currentInspection.Auto_Assign_Skip__c == false && !currentInspection.ADHOC__c.Contains("Rep Needed"))
+                if (currentInspection.Auto_Assign_Skip__c == false)
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
@@ -631,7 +631,7 @@ namespace WpfApp1
                 List<OfficialInspectorClass> templist2 = new List<OfficialInspectorClass>();
                 currentInspection = findInspectionbyOrderNumber(autoqueue[i].Substring(0, 6), client);
 
-                if (currentInspection.Auto_Assign_Skip__c == false && !currentInspection.ADHOC__c.Contains("Rep Needed"))
+                if (currentInspection.Auto_Assign_Skip__c == false)
                 {
                     List<string> historyList = new List<string>();
                     inspectorAssign = "";
@@ -674,12 +674,12 @@ namespace WpfApp1
                         updateInspector.Inspector__c = inspectorAssign1;
                         assignedarray.Add((currentInspection.Name + ": " + inspectorAssign));
                         //updateInspectorCount(tempList[0].contactID);
-                        //client.Update("Inspection__c", currentInspection.Id, updateInspector);
+                        client.Update("Inspection__c", currentInspection.Id, updateInspector);
                     }
                     else
                     {
                         skippedarray.Add((currentInspection.Name + ": Skipped"));
-                        /*UpdateAdhocClass repad = new UpdateAdhocClass();
+                        UpdateAdhocClass repad = new UpdateAdhocClass();
                         if (currentInspection.ADHOC__c == null)
                         {
                             currentInspection.ADHOC__c = "";
@@ -688,7 +688,7 @@ namespace WpfApp1
                         {
                             repad.ADHOC__c = "Rep Needed " + currentInspection.ADHOC__c;
                             client.Update("Inspection__c", currentInspection.Id, repad);
-                        }*/                        
+                        }                       
                     }
                 }
                 progress.Report("Orders Assigned: " + i + " of " + autoqueue.Count);

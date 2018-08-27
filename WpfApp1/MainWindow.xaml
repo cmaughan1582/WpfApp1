@@ -48,7 +48,7 @@
             </Grid>
             <Button Name="Auto_assign" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign_Click" Width="80"/>
             <Button Name="Auto_assign1" Visibility="Visible" Canvas.Bottom="10" Canvas.Right="10" Content="Auto-Assign" Click="Auto_assign1_Click"  Width="80"/>
-            
+            <Button Name="Account_edit" Content="Edit Inspector" Canvas.Left="10" Canvas.Bottom="10" Width="90" Click="Account_edit_Click"/>
         </Canvas>
 
         <!--Results Page-->
@@ -167,14 +167,32 @@
         </Canvas>
 
         <!--This is the choose mode page-->
-        <Canvas Name="mode_page" Visibility="Collapsed">
+        <Canvas Name="mode_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
             <TextBlock Canvas.Left="0" TextWrapping="Wrap" Text="Choose HUD or Non-HUD Mode" Canvas.Top="54" Width="{Binding ActualWidth, ElementName=Window1}" FontSize="36" TextAlignment="Center" FontWeight="Bold"/>
             <Grid Canvas.Top="140" Width="{Binding ActualWidth, ElementName=Canvas1}">
                 <Button Name="Non_Hud_button" Margin="150, 0, 0, 0" Content="Non-HUD" Width="74" Click="Non_Hud_button_Click" HorizontalAlignment="Center"/>
                 <Button Name="Hud_button" Content="HUD" Margin="0, 0, 150, 0" Width="74" Click="Hud_button_Click"  HorizontalAlignment="Center"/>
             </Grid>
+            
+        </Canvas>
+        <!--This is to find the account you want to edit-->
+        <Canvas Name="find_inspector_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
+            <TextBlock Text="Enter Account ID:" Canvas.Top="15" Canvas.Left="15" FontSize="36" FontWeight="Bold"/>
+            <TextBlock Text="The account ID is the letters and numbers after the .com/ and before any ? when the page is pulled up on Salesforce." Canvas.Top="60" Canvas.Left="15" FontSize="16"/>
+            <TextBox Name="inspector_account_box" Canvas.Left="320" Canvas.Top="28" Height="30" Width="195" FontSize="20"/>
+            <Button Name="search_account_id" Content="Search" Width="50" Canvas.Left="530" Canvas.Top="30" Click="search_account_id_Click"/>
+            <Button Name="Cancel_account_id" Content="Cancel" Width="50" Canvas.Left="590" Canvas.Top="30" Click="Cancel_account_id_Click"/>
+            <TextBlock Name="not_found" Text="That Account wasn't found, please try again." Visibility="Collapsed" Canvas.Top="90" Canvas.Left="15" FontSize="18" FontWeight="Bold"/>
         </Canvas>
 
+        <Canvas Name="edit_account_page" Visibility="Collapsed" Height="{Binding ActualHeight, ElementName=Canvas1}" Width="{Binding ActualWidth, ElementName=Canvas1}">
+            <TextBlock Name="edit_account_text" Text="ACCOUNT NAME" Canvas.Left="15" Canvas.Top="15" FontSize="36" FontWeight="Bold"/>
+            <Button Name="reset_coordinates" Content="Reset Coordinates" Width="105" Canvas.Top="70" Canvas.Left="15" Click="reset_coordinates_Click" />
+            <Button Name="HUD_exception" Content="Make HUD Exception" Width="120" Canvas.Top="70" Canvas.Left="135" Click="HUD_exception_Click"/>
+            <Button Name="edit_account_return" Content="Return" Width="45" Canvas.Top="100" Canvas.Left="15" Click="edit_account_return_Click"/>
+            <TextBlock Name="Status_edit" Visibility="Collapsed" Text="The Account was edited successfully!" Canvas.Left="15" Canvas.Top="130" FontSize="16" />
+            <Button Name="Reset_Hud_Exception" Content="Remove HUD Exception" Width="135" Canvas.Top="70" Canvas.Left="270" Click="Reset_Hud_Exception_Click"/>
+        </Canvas>
         <!--This is the new login info page-->
         <Canvas Name="credentials_page" Visibility="Collapsed">
             <TextBlock Name="credentials_text" Canvas.Left="0" TextWrapping="Wrap" Text="Enter Login Information Below" Width="{Binding ActualWidth, ElementName=Canvas1}" Canvas.Top="30" FontSize="36" TextAlignment="Center"/>
