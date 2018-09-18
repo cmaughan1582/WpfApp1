@@ -1254,6 +1254,8 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             Building_database.Text = "Auto-Assigning Orders...";
             Records_text.Text = "Orders Assigned:";
             var progress = new Progress<string>(s => Records_text.Text = s);
+            List<string> testlist = new List<string>();
+            testlist.Add("166697");
             workingList = await Task.Factory.StartNew(() => SecondThreadConcern.Longwork3(progress, client, workingList, autoqueue),
                                         TaskCreationOptions.LongRunning);
             rebuild_progress.Visibility = Visibility.Collapsed;
@@ -1744,8 +1746,23 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
         private void Change_coordinates_Click(object sender, RoutedEventArgs e)
         {
             Results_Page.Visibility = Visibility.Collapsed;
-            
+            newlatBox.Text = "";
+            newlonBox.Text = "";
             Change_coor_page.Visibility = Visibility.Visible;
+            newlatBox.Focus();
+        }
+
+        private void newlatBox_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void newlonBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                Save_coor_button_Click(this, new RoutedEventArgs());
+            }
         }
 
         private void Cancel_coor_Click(object sender, RoutedEventArgs e)
@@ -1852,6 +1869,12 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             find_inspector_page.Visibility = Visibility.Collapsed;
             Database_Loaded.Text = "";
             Search_Page.Visibility = Visibility.Visible;
+        }
+        private void inspector_account_box_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) {
+                search_account_id_Click(this, new RoutedEventArgs());
+            }
         }
         private void search_account_id_Click(object sender, RoutedEventArgs e)
         {
