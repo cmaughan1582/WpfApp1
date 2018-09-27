@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace WpfApp1
 {
@@ -36,7 +37,7 @@ namespace WpfApp1
         Dictionary<String, String> assignDict = new Dictionary<String, String>();
         Boolean HUDmode = false;
         Dictionary<String, String> credentials = new Dictionary<String, String>();
-        List<String> assignNames = new List<string>();
+        List<AssignButtonContent> assignNames = new List<AssignButtonContent>();
         public const String mapKey = "On5gRfRDnoozDkk8zKjo5GpXGbvYCycm";
         public SalesforceClient client = new SalesforceClient();
         List<OfficialInspectorClass> workingList = new List<OfficialInspectorClass>();
@@ -352,7 +353,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                 }
                 if (currentInspection != null)
                 {
-                    assignNames = new List<String>();
+                    assignNames = new List<AssignButtonContent>();
                     sortByDistance(client);
                     tenInspectors = new List<String>();
                     for (int i = 0; i < 10; i++)
@@ -573,6 +574,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     + "Grade: " + workingList[i].Inspector_Ranking__c + "      Assigned Inspections: " + workingList[i].assignedInspections + "      FNMA: " + fnmaString + "\n"
                     + "Status: " + workingList[i].Status__c + "      Fee: $" + workingList[i].feeDictionary[currentInspection.Fee_Type__c]
                     + "\nPhone: " + workingList[i].Phone + "      Cap: " + workingList[i].Max_Insp_Count__c + " Inspections"
+                    + "\nCoverage Area: " + workingList[i].Coverage_Area_Radius__c + " miles"
                     + "\nComments: " + workingList[i].Comments__c + "\n");
             }
             else
@@ -588,11 +590,11 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
 
         //this is the function that does the actual sorting, used by search results and sort button functions
         //this function also builds a list of inspections in the assign queue, based on HUD or non HUD mode
-        private List<String> sortAssignQueue()
+        private List<AssignButtonContent> sortAssignQueue()
         {
-            List<String> queue = new List<String>();
+            List<AssignButtonContent> queue = new List<AssignButtonContent>();
             List<InspectionListItem> worker = new List<InspectionListItem>();
-            var iassign = client.Query<InspectionListItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
+            var iassign = client.Query<InspectionListItem>("SELECT Id, Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
             for (int i = 0; i < iassign.Count; i++)
             {
                 if (iassign[i].ADHOC__c == null)
@@ -698,8 +700,15 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             //this finally puts the inspections into a string for the buttons in the middle
             for (int i = 0; i < worker.Count; i++)
             {
-                queue.Add(worker[i].Name + "\nADHOC: " + worker[i].ADHOC__c + "\nRegion: " + worker[i].Region__c);
-            }
+                AssignButtonContent content = new AssignButtonContent();
+                if (assignDict.ContainsKey(worker[i].Id))
+                {
+                    content.inAssignDict = true;
+                    content.backgroundColor = "LightGreen";
+                }
+                content.buttonContent = worker[i].Name + "\nADHOC: " + worker[i].ADHOC__c + "\nRegion: " + worker[i].Region__c;
+                queue.Add(content);
+            }            
             return queue;
         }
 
@@ -1248,7 +1257,12 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
         //This is the autoassign function, the button is on the search page but it isn't really related to searching so I will just leave it here
         async private void Auto_assign_Click(object sender, RoutedEventArgs e)
         {
-            List<String> autoqueue = sortAssignQueue();
+            List<AssignButtonContent> autoqueue1 = sortAssignQueue();
+            List<String> autoqueue = new List<string>();
+            for(int i = 0; i < autoqueue1.Count; i++)
+            {
+                autoqueue.Add(autoqueue1[i].buttonContent);
+            }
             Search_Page.Visibility = Visibility.Collapsed;
             rebuild_progress.Visibility = Visibility.Visible;
             Building_database.Text = "Auto-Assigning Orders...";
@@ -1269,7 +1283,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
             {
                 InspectionJSONClass mapInspection = currentInspection;
                 List<InspectionMapItem> assignqueue = new List<InspectionMapItem>();
-                IList<InspectionMapItem> iassign1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'");
+                IList<InspectionMapItem> iassign1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Assign' AND On_Hold__c!='Yes'  AND Property_Latitude__c=null");
                 List<InspectionMapItem> iassign = HUDorNot(iassign1);
                 for (int i = 0; i < iassign.Count; i++)
                 {
@@ -1382,7 +1396,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     assignqueue.Add(iassign[i]);
                 }//this maps and add assign queue to list
                 List<InspectionMapItem> withqueue = new List<InspectionMapItem>();
-                IList<InspectionMapItem> iwith1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='With Inspector' AND On_Hold__c!='Yes'");
+                IList<InspectionMapItem> iwith1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='With Inspector' AND On_Hold__c!='Yes' AND Property_Latitude__c=null");
                 List<InspectionMapItem> iwith = HUDorNot(iwith1);
                 for (int i = 0; i < iwith.Count; i++)
                 {
@@ -1499,7 +1513,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     withqueue.Add(iwith[i]);
                 }//this maps and adds with inspector queue to list
                 List<InspectionMapItem> validationqueue = new List<InspectionMapItem>();
-                IList<InspectionMapItem> ival1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Validation' AND On_Hold__c!='Yes' AND of_Days_in_Current_Queue__c >= 0");
+                IList<InspectionMapItem> ival1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c From Inspection__c WHERE Queue__c='Validation' AND On_Hold__c!='Yes' AND of_Days_in_Current_Queue__c >= 0 AND Property_Latitude__c=null");
                 List<InspectionMapItem> ival = HUDorNot(ival1);
                 for (int i = 0; i < ival.Count; i++)
                 {
@@ -1616,7 +1630,7 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
                     validationqueue.Add(ival[i]);
                 }//this maps and adds validation queue to list
                 List<InspectionMapItem> acceptqueue = new List<InspectionMapItem>();
-                IList<InspectionMapItem> iaccept1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='Accept' AND On_Hold__c!='Yes'");
+                IList<InspectionMapItem> iaccept1 = client.Query<InspectionMapItem>("SELECT Name, Fee_Type__c, Inspection_Folder__c, ADHOC__c, Region__c, Inspector__c, Property_Longitude__c, Property_Latitude__c, Rep_ID_Inspector_Formula__c From Inspection__c WHERE Queue__c='Accept' AND On_Hold__c!='Yes' AND Property_Latitude__c=null");
                 List<InspectionMapItem> iaccept = HUDorNot(iaccept1);
                 for (int i = 0; i < iaccept.Count; i++)
                 {
@@ -1845,7 +1859,12 @@ System.Security.Principal.WindowsIdentity.GetCurrent());
 
         private async void Auto_assign1_Click(object sender, RoutedEventArgs e)
         {
-            List<String> autoqueue = sortAssignQueue();
+            List<AssignButtonContent> autoqueue1 = sortAssignQueue();
+            List<String> autoqueue = new List<string>();
+            for(int i = 0; i < autoqueue1.Count; i++)
+            {
+                autoqueue.Add(autoqueue1[i].buttonContent);
+            }
             Search_Page.Visibility = Visibility.Collapsed;
             rebuild_progress.Visibility = Visibility.Visible;
             Building_database.Text = "Auto-Assigning Orders...";

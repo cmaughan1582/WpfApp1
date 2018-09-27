@@ -93,7 +93,7 @@
             <ListView Name="Assign_queue" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="100" Canvas.Left="515" Canvas.Top="122" Width="250">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Path=.}" Click="Assign_List" ToolTip="{Binding Path=.}"></Button>
+                        <Button Content="{Binding buttonContent}" Click="Assign_List" ToolTip="{Binding buttonContent}" Background="{Binding backgroundColor}"></Button>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>

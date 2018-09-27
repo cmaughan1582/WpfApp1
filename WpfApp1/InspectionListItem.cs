@@ -14,5 +14,6 @@ namespace WpfApp1
         public String Region__c { get; set; }
         public String Inspector__c { get; set; }
         public String Fee_Type__c { get; set; }
+        public String Id { get; set; }
     }
 }

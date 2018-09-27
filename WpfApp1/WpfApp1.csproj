@@ -137,6 +137,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AssignButtonContent.cs" />
     <Compile Include="CompareClass.cs" />
     <Compile Include="FormClass.cs" />
     <Compile Include="HistoryClass.cs" />
